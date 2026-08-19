@@ -3,7 +3,7 @@ description: "Every issue, fixed. Fixel reads a GitHub issue, fixes it with Clau
 author: "AmIrRX0"
 branding:
   icon: "tool"
-  color: "purple"
+  color: "blue"
 
 inputs:
   anthropic-api-key:
