@@ -2,7 +2,7 @@
 
 <img src="assets/logo.svg" alt="Fixel" width="230"/>
 
-# 🔧 Fixel
+# Fixel
 
 **Every issue, fixed.**
 
