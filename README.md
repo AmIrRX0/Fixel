@@ -1,8 +1,6 @@
 <div align="center">
 
-<img src="assets/logo.svg" alt="Fixel" width="230"/>
-
-# 🔧 Fixel
+<img src="assets/banner.svg" alt="Fixel — every issue, fixed." width="100%"/>
 
 **Every issue, fixed.**
 

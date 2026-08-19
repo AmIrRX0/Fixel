@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="1200" height="360" role="img" aria-label="Fixel — every issue, fixed.">
+  <defs>
+    <linearGradient id="fx" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4fd9f6"/>
+      <stop offset="1" stop-color="#1877ec"/>
+    </linearGradient>
+    <linearGradient id="px" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#38b6f2"/>
+      <stop offset="1" stop-color="#1877ec"/>
+    </linearGradient>
+  </defs>
+
+  <!-- dark card background -->
+  <rect width="1200" height="360" rx="28" fill="#0a0d12"/>
+
+  <!-- the F mark + dissolving pixels -->
+  <g transform="translate(-110,10) scale(0.95)">
+    <path fill="url(#fx)" d="M216 80 L330 80 L330 128 L258 128 L258 164 L318 164 L318 212 L258 212 L258 296 L200 264 L200 96 Z"/>
+    <rect x="344" y="64"  width="22" height="22" fill="url(#px)"/>
+    <rect x="378" y="94"  width="16" height="16" fill="#4fd9f6"/>
+    <rect x="344" y="120" width="26" height="26" fill="url(#px)"/>
+    <rect x="336" y="180" width="20" height="20" fill="url(#px)"/>
+    <rect x="368" y="154" width="13" height="13" fill="#38b6f2"/>
+  </g>
+
+  <!-- wordmark + tagline -->
+  <text x="320" y="222" font-family="Segoe UI, Helvetica, Arial, sans-serif"
+        font-size="150" font-weight="700" fill="#ffffff">fixel</text>
+  <text x="328" y="284" font-family="Segoe UI, Helvetica, Arial, sans-serif"
+        font-size="26" font-weight="600" fill="#8b95a5"
+        letter-spacing="10">EVERY ISSUE, FIXED.</text>
+
+  <!-- faint pixels drifting on the right, for balance -->
+  <rect x="1046" y="84"  width="26" height="26" fill="#1877ec" opacity="0.55"/>
+  <rect x="1086" y="120" width="16" height="16" fill="#38b6f2" opacity="0.45"/>
+  <rect x="1052" y="152" width="12" height="12" fill="#4fd9f6" opacity="0.35"/>
+  <rect x="1096" y="226" width="22" height="22" fill="#1877ec" opacity="0.4"/>
+  <rect x="1058" y="258" width="14" height="14" fill="#38b6f2" opacity="0.3"/>
+</svg>
