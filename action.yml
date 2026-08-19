@@ -2,7 +2,7 @@ name: "Fixel"
 description: "Every issue, fixed. Fixel reads a GitHub issue, fixes it with Claude, and opens a pull request."
 author: "AmIrRX0"
 branding:
-  icon: "tool"
+  icon: "box"
   color: "blue"
 
 inputs:
