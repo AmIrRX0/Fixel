@@ -1,0 +1,19 @@
+{
+  "name": "fixel",
+  "version": "1.0.0",
+  "description": "Fixel — every issue, fixed. Point it at a GitHub repository and it reads open issues, fixes them with Claude, and opens pull requests (with fork mode for repos you can't push to).",
+  "type": "module",
+  "bin": {
+    "fixel": "./src/cli.js"
+  },
+  "scripts": {
+    "start": "node src/cli.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.5",
+    "@octokit/rest": "^21.1.1"
+  }
+}
