@@ -1,0 +1,63 @@
+name: "Fixel"
+description: "Every issue, fixed. Fixel reads a GitHub issue, fixes it with Claude, and opens a pull request."
+author: "AmIrRX0"
+branding:
+  icon: "tool"
+  color: "purple"
+
+inputs:
+  anthropic-api-key:
+    description: "Anthropic API key used by the Claude Agent SDK"
+    required: true
+  github-token:
+    description: "Token used to read issues, push branches, and open PRs (usually secrets.GITHUB_TOKEN)"
+    required: true
+  issue-number:
+    description: "Only fix this issue number (defaults to picking open issues automatically)"
+    required: false
+    default: ""
+  max-issues:
+    description: "Max issues to process in one run when issue-number is not set"
+    required: false
+    default: "1"
+  labels:
+    description: "Comma-separated labels to filter issues by"
+    required: false
+    default: ""
+  model:
+    description: "Claude model id (e.g. claude-opus-5)"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Install Fixel dependencies
+      shell: bash
+      run: npm ci --prefix "$GITHUB_ACTION_PATH" --no-audit --no-fund
+
+    - name: Run Fixel
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
+        FIXEL_ISSUE: ${{ inputs.issue-number }}
+        FIXEL_MAX_ISSUES: ${{ inputs.max-issues }}
+        FIXEL_LABELS: ${{ inputs.labels }}
+        FIXEL_MODEL: ${{ inputs.model }}
+      run: |
+        set -euo pipefail
+        args=(--repo "$GITHUB_REPOSITORY" --verbose)
+        if [ -n "$FIXEL_ISSUE" ]; then
+          args+=(--issue "$FIXEL_ISSUE")
+        else
+          args+=(--max-issues "$FIXEL_MAX_ISSUES")
+        fi
+        [ -n "$FIXEL_LABELS" ] && args+=(--labels "$FIXEL_LABELS")
+        [ -n "$FIXEL_MODEL" ] && args+=(--model "$FIXEL_MODEL")
+        node "$GITHUB_ACTION_PATH/src/cli.js" "${args[@]}"

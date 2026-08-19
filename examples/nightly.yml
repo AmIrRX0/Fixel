@@ -1,0 +1,27 @@
+# Copy this file to .github/workflows/fixel-nightly.yml in YOUR repository.
+#
+# Every night at 02:00 UTC, Fixel picks up to 3 open issues labeled `bug`,
+# fixes them with Claude, and opens a pull request for each.
+#
+# Required secret: ANTHROPIC_API_KEY (Settings → Secrets and variables → Actions)
+
+name: Fixel nightly
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: read
+    steps:
+      - uses: AmIrRX0/Fixel@main
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          max-issues: "3"
+          labels: "bug"

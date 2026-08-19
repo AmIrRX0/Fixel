@@ -4,7 +4,13 @@
 
 **Every issue, fixed.**
 
-*Point it at a GitHub repo — it reads the open issues, fixes them with Claude, and opens a pull request for each one.*
+*Label an issue → get a pull request. Fixel reads your GitHub issues, fixes them with Claude, and opens a PR for each one.*
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-a855f7.svg)](LICENSE)
+[![Node.js ≥18](https://img.shields.io/badge/Node.js-%E2%89%A518-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
+[![Powered by Claude](https://img.shields.io/badge/Powered%20by-Claude-d97757)](https://claude.com)
+[![GitHub Action](https://img.shields.io/badge/GitHub-Action-2088FF?logo=githubactions&logoColor=white)](#-use-as-a-github-action)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 [English](#-english) · [فارسی](#-فارسی)
 
@@ -16,24 +22,45 @@
 
 Fixel is an autonomous GitHub issue-fixing agent. Point it at a repository, it reads the open issues, fixes them with [Claude](https://claude.com) via the Claude Agent SDK, and opens a pull request per issue. If you can't push to the repo, it forks it first and opens PRs from your fork.
 
-### ✨ What it does
+```mermaid
+flowchart LR
+    A["🏷️ Open issue"] --> B["🔍 Fixel reads it<br/>(+ comments)"]
+    B --> C["🌿 Fresh branch<br/>fixel/issue-N"]
+    C --> D["🤖 Claude fixes<br/>the code"]
+    D --> E["✅ Commit & push"]
+    E --> F["🚀 PR opened<br/>Fixes #N"]
+    F --> G["🎉 Merge →<br/>issue auto-closes"]
+```
 
-1. Connects to GitHub with your `GITHUB_TOKEN`
-2. If you don't have push access to the repo (or you pass `--fork`), it **forks** the repo and syncs the fork with upstream
-3. Lists the open issues (filterable by label or issue number)
-4. For each issue:
-   - Creates a fresh branch off the latest base code (`fixel/issue-N`)
-   - Feeds the issue text + its comments to Claude, which fixes the code inside a clone of the repo
-   - If anything changed: commit → push → **open a PR** with `Fixes #N` (so the issue closes automatically on merge)
-5. Skips issues that already have an open PR — no duplicate work
+### ⚡ Use as a GitHub Action
 
-### 📦 Requirements
+The zero-setup way. Copy [`examples/label-trigger.yml`](examples/label-trigger.yml) to `.github/workflows/fixel.yml` in your repo, add your `ANTHROPIC_API_KEY` secret, and then — **just add the `fixel` label to any issue.** A pull request shows up by itself:
 
-- Node.js 18+ and `git`
-- A [GitHub token](https://github.com/settings/tokens) — classic with the `repo` scope, or fine-grained with Contents (read/write) + Issues (read) + Pull requests (read/write). In fork mode, push access is only needed on **your fork**.
-- An Anthropic API key (`ANTHROPIC_API_KEY`) — or a logged-in `claude` CLI on the machine
+```yaml
+name: Fixel
+on:
+  issues:
+    types: [labeled]
 
-### 🚀 Install & run
+jobs:
+  fix:
+    if: github.event.label.name == 'fixel'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: read
+    steps:
+      - uses: AmIrRX0/Fixel@main
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+```
+
+Prefer a night shift? [`examples/nightly.yml`](examples/nightly.yml) makes Fixel fix up to 3 `bug`-labeled issues every night while you sleep. 😴
+
+### 💻 Use as a CLI
 
 ```bash
 git clone https://github.com/AmIrRX0/Fixel.git
@@ -52,7 +79,15 @@ node --env-file=.env src/cli.js --repo bigorg/oss-project --fork --issue 42 --ve
 node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 ```
 
-### ⚙️ Options
+### ✨ What it does
+
+1. Connects to GitHub with your `GITHUB_TOKEN`
+2. If you don't have push access to the repo (or you pass `--fork`), it **forks** the repo and syncs the fork with upstream
+3. Lists the open issues (filterable by label or issue number)
+4. For each issue: fresh branch off the latest base (`fixel/issue-N`) → Claude fixes the code inside a clone → commit → push → **PR with `Fixes #N`** (so the issue closes automatically on merge)
+5. Skips issues that already have an open PR — no duplicate work
+
+### ⚙️ CLI options
 
 | Option | Description |
 |---|---|
@@ -66,16 +101,30 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 | `--dry-run` | Fix locally and show the diff — no push, no PR |
 | `--verbose` | Stream the agent's progress step by step |
 
+### 📦 Requirements
+
+- Node.js 18+ and `git`
+- A [GitHub token](https://github.com/settings/tokens) — classic with the `repo` scope, or fine-grained with Contents (read/write) + Issues (read) + Pull requests (read/write). In fork mode, push access is only needed on **your fork**. (As an Action, `secrets.GITHUB_TOKEN` just works.)
+- An Anthropic API key (`ANTHROPIC_API_KEY`) — or a logged-in `claude` CLI on the machine
+
 ### 🔒 Security notes
 
 - The GitHub token never appears in remote URLs or visible process arguments (a transient credential helper is used instead).
 - The agent works inside a throwaway, isolated clone and is not allowed to commit or push by itself — Fixel performs commit and push in a controlled way outside the agent session.
 - Issue text is untrusted external input; the prompt tells the agent to ignore any instructions outside the scope of the fix (leaking secrets, changing settings, …). Still, for unfamiliar repos prefer a minimal token plus `--fork` mode, and review PRs before merging.
-- For periodic runs (e.g. nightly), wrap the same command in cron or GitHub Actions.
+
+### 🗺️ Roadmap
+
+- [x] CLI with fork mode, labels filter, dry-run
+- [x] GitHub Action with label trigger + nightly schedule
+- [ ] Comment trigger (`@fixel fix this`) on issues
+- [ ] Auto-retry when CI fails on the opened PR
+- [ ] Cost report comment on each PR
 
 ### 🧠 Architecture
 
 ```
+action.yml      ← GitHub Action wrapper (label an issue → get a PR)
 src/cli.js      ← argument parsing & input validation
 src/runner.js   ← orchestration: fork/clone → pick issues → branch → agent → commit → push → PR
 src/agent.js    ← one Claude Agent SDK session per issue (file & bash tools)
@@ -83,6 +132,8 @@ src/github.js   ← GitHub API via Octokit (issues, forks, PRs)
 src/git.js      ← git operations with safe authentication
 src/config.js   ← env loading
 ```
+
+> ⭐ **If Fixel saved you a debugging night, star the repo** — it's how other developers find it.
 
 ---
 
@@ -92,31 +143,11 @@ src/config.js   ← env loading
 
 Fixel یک ایجنت خودکار حل ایشوهای گیت‌هاب است. یک ریپو بهش بده؛ ایشوهای باز را می‌خواند، با <a href="https://claude.com">Claude</a> و از طریق Claude Agent SDK کد را فیکس می‌کند و برای هر ایشو یک Pull Request باز می‌کند. اگر به ریپو دسترسی push نداشته باشی، اول فورک می‌زند و PRها را از فورک باز می‌کند.
 
-### ✨ چی کار می‌کنه؟
+### ⚡ استفاده به‌عنوان GitHub Action
 
-<ol>
-<li>با <code>GITHUB_TOKEN</code> به گیت‌هاب وصل می‌شه</li>
-<li>اگر به ریپو دسترسی push نداشته باشی (یا <code>--fork</code> بدی) خودش <b>فورک</b> می‌زنه و فورک رو با upstream سینک می‌کنه</li>
-<li>ایشوهای باز رو لیست می‌کنه (با قابلیت فیلتر با لیبل یا شماره ایشو)</li>
-<li>برای هر ایشو:
-<ul>
-<li>یک برنچ تازه از آخرین کد base می‌سازه (<code>fixel/issue-N</code>)</li>
-<li>متن ایشو + کامنت‌هاش رو به Claude می‌ده و Claude داخل کلونِ ریپو کد رو فیکس می‌کنه</li>
-<li>اگر تغییری ایجاد شده باشه: کامیت ← پوش ← <b>باز کردن PR</b> با <code>Fixes #N</code> (تا با مرج شدن PR، ایشو خودکار بسته بشه)</li>
-</ul>
-</li>
-<li>اگر برای ایشویی از قبل PR باز وجود داشته باشه، دوباره‌کاری نمی‌کنه</li>
-</ol>
+راحت‌ترین راه، بدون هیچ سروری: فایل <a href="examples/label-trigger.yml"><code>examples/label-trigger.yml</code></a> را در ریپوی خودت در مسیر <code>.github/workflows/fixel.yml</code> کپی کن، سیکرت <code>ANTHROPIC_API_KEY</code> را اضافه کن و بعد — <b>فقط روی هر ایشویی لیبل <code>fixel</code> بزن.</b> پول‌ریکوئست خودش ظاهر می‌شود! برای اجرای شبانه هم <a href="examples/nightly.yml"><code>examples/nightly.yml</code></a> را بردار: هر شب تا ۳ ایشوی دارای لیبل <code>bug</code> را وقتی خوابی فیکس می‌کند 😴
 
-### 📦 پیش‌نیازها
-
-<ul>
-<li>Node.js نسخه ۱۸ به بالا و <code>git</code></li>
-<li>یک <a href="https://github.com/settings/tokens">GitHub token</a> — کلاسیک با اسکوپ <code>repo</code>، یا fine-grained با دسترسی Contents (خواندن/نوشتن) + Issues (خواندن) + Pull requests (خواندن/نوشتن). در حالت فورک، فقط روی فورکِ خودت دسترسی push لازمه.</li>
-<li>کلید API آنتروپیک (<code>ANTHROPIC_API_KEY</code>) — یا اینکه <code>claude</code> CLI روی سیستم لاگین باشه</li>
-</ul>
-
-### 🚀 نصب و اجرا
+### 💻 استفاده به‌عنوان CLI
 
 </div>
 
@@ -139,7 +170,17 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 
 <div dir="rtl">
 
-### ⚙️ آپشن‌ها
+### ✨ چی کار می‌کنه؟
+
+<ol>
+<li>با <code>GITHUB_TOKEN</code> به گیت‌هاب وصل می‌شه</li>
+<li>اگر به ریپو دسترسی push نداشته باشی (یا <code>--fork</code> بدی) خودش <b>فورک</b> می‌زنه و فورک رو با upstream سینک می‌کنه</li>
+<li>ایشوهای باز رو لیست می‌کنه (با قابلیت فیلتر با لیبل یا شماره ایشو)</li>
+<li>برای هر ایشو: برنچ تازه از آخرین کد base (<code>fixel/issue-N</code>) ← فیکس توسط Claude داخل کلونِ ریپو ← کامیت ← پوش ← <b>PR با <code>Fixes #N</code></b> (تا با مرج، ایشو خودکار بسته بشه)</li>
+<li>اگر برای ایشویی از قبل PR باز وجود داشته باشه، دوباره‌کاری نمی‌کنه</li>
+</ol>
+
+### ⚙️ آپشن‌های CLI
 
 | آپشن | توضیح |
 |---|---|
@@ -153,27 +194,35 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 | <code>--dry-run</code> | فقط فیکس لوکال و نمایش diff — بدون پوش و PR |
 | <code>--verbose</code> | نمایش قدم‌به‌قدم کار ایجنت |
 
+### 📦 پیش‌نیازها
+
+<ul>
+<li>Node.js نسخه ۱۸ به بالا و <code>git</code></li>
+<li>یک <a href="https://github.com/settings/tokens">GitHub token</a> — کلاسیک با اسکوپ <code>repo</code>، یا fine-grained با دسترسی Contents (خواندن/نوشتن) + Issues (خواندن) + Pull requests (خواندن/نوشتن). در حالت فورک، فقط روی فورکِ خودت دسترسی push لازمه. (در حالت Action همون <code>secrets.GITHUB_TOKEN</code> کافیه.)</li>
+<li>کلید API آنتروپیک (<code>ANTHROPIC_API_KEY</code>) — یا اینکه <code>claude</code> CLI روی سیستم لاگین باشه</li>
+</ul>
+
 ### 🔒 نکات امنیتی
 
 <ul>
 <li>توکن گیت‌هاب هیچ‌وقت داخل URL ریموت یا آرگومان‌های قابل‌مشاهده قرار نمی‌گیره (از credential helper موقتی استفاده می‌شه).</li>
 <li>ایجنت داخل یک کلونِ موقتی و ایزوله کار می‌کنه و اجازه‌ی commit/push مستقیم نداره — کامیت و پوش رو خود Fixel به‌صورت کنترل‌شده انجام می‌ده.</li>
-<li>متن ایشوها ورودیِ خارجی و غیرقابل‌اعتماده؛ در پرامپت به ایجنت گفته شده دستورهای خارج از محدوده‌ی فیکس (لو دادن secret، تغییر تنظیمات و…) رو نادیده بگیره. با این حال بهتره برای ریپوهای غریبه از یک توکن حداقلی و حالت <code>--fork</code> استفاده کنی و PRها رو قبل از مرج خودت بازبینی کنی.</li>
-<li>برای اجرای دوره‌ای (مثلاً هر شب) می‌تونی همین دستور رو داخل cron یا GitHub Actions بذاری.</li>
+<li>متن ایشوها ورودیِ خارجی و غیرقابل‌اعتماده؛ در پرامپت به ایجنت گفته شده دستورهای خارج از محدوده‌ی فیکس رو نادیده بگیره. با این حال برای ریپوهای غریبه از توکن حداقلی و حالت <code>--fork</code> استفاده کن و PRها رو قبل از مرج بازبینی کن.</li>
 </ul>
 
-### 🧠 معماری
+### 🗺️ نقشه راه
+
+<ul>
+<li>✅ CLI با حالت فورک، فیلتر لیبل و dry-run</li>
+<li>✅ GitHub Action با تریگر لیبل + زمان‌بندی شبانه</li>
+<li>⬜ تریگر با کامنت (<code>@fixel fix this</code>) روی ایشوها</li>
+<li>⬜ تلاش مجدد خودکار وقتی CI روی PR قرمز می‌شه</li>
+<li>⬜ کامنت گزارش هزینه روی هر PR</li>
+</ul>
+
+<blockquote>⭐ اگه Fixel یک شب دیباگ رو برات نجات داد، به ریپو استار بده — بقیه‌ی دولوپرها این‌طوری پیداش می‌کنن.</blockquote>
 
 </div>
-
-```
-src/cli.js      ← پارس آرگومان‌ها و ورودی‌ها
-src/runner.js   ← ارکستراسیون: فورک/کلون → انتخاب ایشو → برنچ → ایجنت → کامیت → پوش → PR
-src/agent.js    ← اجرای Claude Agent SDK روی هر ایشو (query با ابزارهای فایل و bash)
-src/github.js   ← کارهای API گیت‌هاب با Octokit (ایشوها، فورک، PR)
-src/git.js      ← عملیات git با احراز هویت امن
-src/config.js   ← خواندن env
-```
 
 ---
 

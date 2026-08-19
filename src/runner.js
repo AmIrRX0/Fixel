@@ -2,8 +2,9 @@ import path from "node:path";
 import { GitHubClient } from "./github.js";
 import { GitRepo } from "./git.js";
 import { solveIssue } from "./agent.js";
+import { c } from "./ui.js";
 
-const log = (...args) => console.log(new Date().toISOString(), "-", ...args);
+const log = (...args) => console.log(c.dim(new Date().toISOString()), "-", ...args);
 
 export async function run(opts) {
   const { owner, repo, token } = opts;
@@ -79,7 +80,7 @@ export async function run(opts) {
       continue;
     }
 
-    log(`\n=== Issue #${issue.number}: ${issue.title} ===`);
+    log(c.bold(c.cyan(`\n=== Issue #${issue.number}: ${issue.title} ===`)));
     await git.checkoutNewBranch(branch, startPoint);
 
     const comments = await gh.getIssueComments(owner, repo, issue.number);
@@ -135,12 +136,12 @@ export async function run(opts) {
       base,
       body,
     });
-    log(`Issue #${issue.number}: PR opened → ${pr.html_url}`);
+    log(c.green(`✔ Issue #${issue.number}: PR opened → ${pr.html_url}`));
     if (outcome.costUsd != null) log(`  (agent cost: $${outcome.costUsd.toFixed(4)}, turns: ${outcome.numTurns})`);
     results.push({ issue: issue.number, status: "pr-opened", pr: pr.html_url });
   }
 
-  log("\n=== Summary ===");
+  log(c.bold("\n=== Summary ==="));
   for (const r of results) {
     log(`#${r.issue}: ${r.status}${r.pr ? ` (${r.pr})` : ""}`);
   }

@@ -1,0 +1,26 @@
+# Copy this file to .github/workflows/fixel.yml in YOUR repository.
+#
+# Then: add the `fixel` label to any open issue — Fixel wakes up, fixes it
+# with Claude, and opens a pull request that closes the issue on merge.
+#
+# Required secret: ANTHROPIC_API_KEY (Settings → Secrets and variables → Actions)
+
+name: Fixel
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  fix:
+    if: github.event.label.name == 'fixel'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: read
+    steps:
+      - uses: AmIrRX0/Fixel@main
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}

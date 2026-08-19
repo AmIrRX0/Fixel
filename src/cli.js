@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { loadConfig } from "./config.js";
 import { run } from "./runner.js";
+import { banner } from "./ui.js";
 
 const HELP = `
 🔧 fixel — every issue, fixed: Claude fixes your GitHub issues and opens pull requests
@@ -61,6 +62,7 @@ function parseArgs(argv) {
 }
 
 async function main() {
+  console.log(banner());
   let opts;
   try {
     opts = parseArgs(process.argv.slice(2));
