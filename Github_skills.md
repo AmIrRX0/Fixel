@@ -78,7 +78,7 @@ Do not run a broad launch until all P0 gates pass:
 - [x] README says that every generated PR must be reviewed before merge.
 - [x] Examples use the immutable version tag `@v1.0.0`, not mutable `@main`.
 - [x] Release `v1.0.0` exists and the Action is installable from an immutable version.
-- [ ] A real end-to-end run is recorded; no synthetic success claim is presented as user proof.
+- [ ] A real Fixel/Claude end-to-end run is recorded; no synthetic success claim is presented as user proof.
 
 Why this comes first: public developer communities quickly reject low-quality automated PRs and opaque AI tooling. Fixel earns permission to spread by being transparent, constrained, and useful.
 
@@ -98,7 +98,7 @@ Why this comes first: public developer communities quickly reject low-quality au
 - [x] Security model and threat boundaries are documented.
 - [x] Supported runner/Node versions are explicit (Node.js 20+).
 - [ ] Costs, API-key requirement, permissions, and limitations are disclosed.
-- [ ] At least one reproducible example repository or issue/PR pair is linked.
+- [x] A reproducible Codex-assisted example is linked: [issue #7](https://github.com/AmIrRX0/Fixel/issues/7) -> [PR #8](https://github.com/AmIrRX0/Fixel/pull/8). It is not presented as a Fixel/Claude run.
 - [x] Releases and changelog make changes auditable.
 
 ### Try in 5 minutes
@@ -164,6 +164,7 @@ Fill the result only after the measurement window closes.
 | Date | Hypothesis | Action | Primary metric | Window | Result | Decision |
 |---|---|---|---|---|---|---|
 | 2026-08-24 | Trust and versioned installation are prerequisites for effective launch conversion | Add credential isolation, adversarial tests, CI, security docs, `@v1.0.0` examples, release metadata, topics, and social preview | All technical and repository P0 trust gates pass | Before launch | Passed; the remaining launch gate is a real recorded end-to-end run | Proceed to controlled dogfood before broad promotion |
+| 2026-08-24 | A ChatGPT-authenticated Codex CLI can produce an honest issue-to-PR maintenance case study | Create [issue #7](https://github.com/AmIrRX0/Fixel/issues/7), generate the fix with Codex in a workspace-write sandbox, independently test it, and merge [PR #8](https://github.com/AmIrRX0/Fixel/pull/8) after CI | Issue closed by a reviewed, CI-green PR | Before promotion | Passed: 5 tests and package check passed; PR #8 merged and closed issue #7 | Use as Codex-assisted build-in-public proof, not as proof that Fixel v1.0.0 ran successfully |
 | TBD | A 20–40 second issue-to-PR demo improves repository conversion | Add an honest recorded demo above the fold | Visitor-to-star and install-click change | 7 days | — | — |
 | TBD | A technical Reddit story produces qualified testers | Publish in one rules-compatible community and answer every substantive question | Successful runs and actionable reports | 7 days | — | — |
 | TBD | A native LinkedIn build-in-public demo reaches maintainers | Publish demo + threat-model lesson | Qualified repo visits and workflow copies | 7 days | — | — |
@@ -177,6 +178,8 @@ Fill the result only after the measurement window closes.
 - **2026-08-24 — Verify binary assets after remote publication.** The first PNG blob was truncated in transport while retaining a valid-looking header. Replace it with a visually verified 1280×640 JPEG and validate the fetched artifact before upload.
 - **2026-08-24 — Complete repository-native discovery before external promotion.** Publish `v1.0.0`, use immutable install examples, set an outcome-led description, add focused topics, and verify the social preview survives a settings-page reload.
 - **2026-08-24 — Move to controlled dogfood, not a broad launch yet.** The technical and repository gates now pass, but Reddit and LinkedIn promotion should wait for one reproducible issue-to-PR run that can be shown honestly.
+- **2026-08-24 — Record failed dogfood attempts too.** Fixel v1.0.0 reached the Claude agent step for issue #7, but the signed-in Claude organization disabled subscription access and required an Anthropic API key. This is an authentication prerequisite, not a successful product run.
+- **2026-08-24 — Keep provider attribution exact.** Codex successfully generated the fix for issue #7 using the repository owner's ChatGPT-authenticated Codex CLI; PR #8 passed CI and was merged. This validates the maintenance workflow and provides an honest Codex-assisted case study, but it must not be marketed as a Fixel/Claude-generated PR.
 - **2026-08-24 — Proof must be real.** Do not add a demo, benchmark, testimonial, install number, or success rate until it is reproducible and linked.
 - **2026-08-24 — Require Node.js 20+.** The current secured Agent SDK uses RegExp set notation unavailable in Node 18. A direct Node 18 import test failed; Node 20 and 22 pass. Keeping a false Node 18 compatibility claim would create failed first runs.
 
