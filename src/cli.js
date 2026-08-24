@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-import { loadConfig } from "./config.js";
-import { run } from "./runner.js";
-import { banner } from "./ui.js";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const { version } = require("../package.json");
 
 const HELP = `
 🔧 fixel — every issue, fixed: Claude fixes your GitHub issues and opens pull requests
@@ -11,6 +12,7 @@ Usage:
 
 Options:
   --repo <owner/name>   Target repository (required)
+  -V, --version         Show the version
   --fork                Fork the repo and open PRs from the fork
                         (automatic when you don't have push access)
   --issue <n>           Only work on issue #n (repeatable: --issue 3 --issue 7)
@@ -53,6 +55,8 @@ function parseArgs(argv) {
       case "--workdir": opts.workdir = next(); break;
       case "--dry-run": opts.dryRun = true; break;
       case "--verbose": opts.verbose = true; break;
+      case "-V":
+      case "--version": console.log(version); process.exit(0);
       case "-h":
       case "--help": console.log(HELP); process.exit(0);
       default: throw new Error(`Unknown option: ${arg}`);
@@ -62,7 +66,6 @@ function parseArgs(argv) {
 }
 
 async function main() {
-  console.log(banner());
   let opts;
   try {
     opts = parseArgs(process.argv.slice(2));
@@ -80,6 +83,13 @@ async function main() {
     process.exit(2);
   }
 
+  const [{ loadConfig }, { run }, { banner }] = await Promise.all([
+    import("./config.js"),
+    import("./runner.js"),
+    import("./ui.js"),
+  ]);
+
+  console.log(banner());
   const config = loadConfig();
   const [owner, repo] = opts.repo.split("/");
 

@@ -93,6 +93,7 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 | Option | Description |
 |---|---|
 | `--repo <owner/name>` | Target repository (required) |
+| `-V, --version` | Show the Fixel CLI version |
 | `--fork` | Fork the repo and open PRs from the fork (automatic when you lack push access) |
 | `--issue <n>` | Only this issue (repeatable: `--issue 3 --issue 7`) |
 | `--max-issues <n>` | Max issues per run (default: 3) |
@@ -188,6 +189,7 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 | آپشن | توضیح |
 |---|---|
 | <code>--repo &lt;owner/name&gt;</code> | ریپوی هدف (اجباری) |
+| <code>-V, --version</code> | نمایش نسخه CLI فیکسل |
 | <code>--fork</code> | فورک بزن و PR رو از فورک باز کن (اگر دسترسی push نداشته باشی خودکار فعال می‌شه) |
 | <code>--issue &lt;n&gt;</code> | فقط این ایشو (قابل تکرار: <code>--issue 3 --issue 7</code>) |
 | <code>--max-issues &lt;n&gt;</code> | حداکثر تعداد ایشو در هر اجرا (پیش‌فرض: ۳) |
