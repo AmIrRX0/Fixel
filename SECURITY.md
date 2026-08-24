@@ -8,14 +8,15 @@ Security fixes are applied to the latest release and the current `main` branch. 
 
 ## Security model
 
-- The Claude subprocess receives an allowlisted environment. GitHub, package registry, cloud-provider, and unrelated host credentials are excluded.
+- Every provider subprocess receives an allowlisted environment. GitHub, package registry, cloud-provider, and unrelated host credentials are excluded.
 - The Anthropic key must reach Claude itself, but sandboxed shell commands are denied access to it.
+- The local Codex provider receives only basic process variables and the paths needed to find its existing Codex login. It does not receive `OPENAI_API_KEY`.
 - Shell commands run with filesystem isolation, a strict network allowlist, and explicit credential-file denial.
 - Sandbox setup fails closed. Fixel will stop instead of silently running agent commands without isolation.
 - The agent works in a temporary clone. Git commit, push, and pull-request creation happen outside the agent session.
 - Public issue text and comments are treated as untrusted input. A generated pull request is a proposal and must be reviewed before merge.
 
-The GitHub Action installs the Linux sandbox prerequisites when they are absent. CLI users must meet the [Claude Agent SDK sandbox prerequisites](https://platform.claude.com/docs/en/agent-sdk/overview) for their platform.
+The GitHub Action always uses Claude and installs its Linux sandbox prerequisites when they are absent. CLI users choosing Claude must meet the [Claude Agent SDK sandbox prerequisites](https://platform.claude.com/docs/en/agent-sdk/overview) for their platform. The Codex provider is for local use only and runs commands with the Codex CLI's `workspace-write` sandbox.
 
 ## Known boundaries
 
@@ -35,4 +36,3 @@ Please do not open a public issue for an undisclosed vulnerability. Use GitHub's
 - any suggested mitigation.
 
 Do not include real credentials or third-party data in a report. A maintainer should acknowledge the report within seven days and coordinate disclosure after a fix is available.
-

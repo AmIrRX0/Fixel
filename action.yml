@@ -65,7 +65,7 @@ runs:
         FIXEL_MODEL: ${{ inputs.model }}
       run: |
         set -euo pipefail
-        args=(--repo "$GITHUB_REPOSITORY" --verbose)
+        args=(--repo "$GITHUB_REPOSITORY" --provider claude --verbose)
         if [ -n "$FIXEL_ISSUE" ]; then
           args+=(--issue "$FIXEL_ISSUE")
         else

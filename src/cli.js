@@ -5,7 +5,7 @@ const require = createRequire(import.meta.url);
 const { version } = require("../package.json");
 
 const HELP = `
-🔧 fixel — every issue, fixed: Claude fixes your GitHub issues and opens pull requests
+🔧 fixel — every issue, fixed: an AI coding agent fixes issues and opens pull requests
 
 Usage:
   fixel --repo <owner/name> [options]
@@ -19,7 +19,8 @@ Options:
   --max-issues <n>      Max number of issues to process in one run (default: 3)
   --labels <a,b>        Only pick issues that have these labels
   --base <branch>       Base branch for PRs (default: repo default branch)
-  --model <id>          Claude model to use (default: your Claude Code default)
+  --provider <name>     Agent provider: claude or codex (default: claude)
+  --model <id>          Provider model (default: the provider's CLI default)
   --workdir <dir>       Where repos get cloned (default: OS temp dir)
   --dry-run             Fix locally and show the diff, but don't push or open PRs
   --verbose             Stream the agent's progress
@@ -27,16 +28,16 @@ Options:
 
 Environment:
   GITHUB_TOKEN          required — GitHub token used for API + git push
-  ANTHROPIC_API_KEY     Claude API key (optional if claude CLI is logged in)
+  ANTHROPIC_API_KEY     Claude API key (Claude only; optional if logged in)
 
 Examples:
-  fixel --repo myuser/myapp --max-issues 5
+  fixel --repo myuser/myapp --provider codex --max-issues 5
   fixel --repo bigorg/oss-project --fork --issue 42 --verbose
   fixel --repo myuser/myapp --labels bug,good-first-issue --dry-run
 `;
 
-function parseArgs(argv) {
-  const opts = { issues: [], labels: [], maxIssues: 3, fork: false, dryRun: false, verbose: false };
+export function parseArgs(argv) {
+  const opts = { provider: "claude", issues: [], labels: [], maxIssues: 3, fork: false, dryRun: false, verbose: false };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     const next = () => {
@@ -51,6 +52,7 @@ function parseArgs(argv) {
       case "--max-issues": opts.maxIssues = Number(next()); break;
       case "--labels": opts.labels = next().split(",").map((s) => s.trim()).filter(Boolean); break;
       case "--base": opts.base = next(); break;
+      case "--provider": opts.provider = next(); break;
       case "--model": opts.model = next(); break;
       case "--workdir": opts.workdir = next(); break;
       case "--dry-run": opts.dryRun = true; break;
@@ -82,6 +84,10 @@ async function main() {
     console.error("Error: --issue expects a positive issue number.");
     process.exit(2);
   }
+  if (!["claude", "codex"].includes(opts.provider)) {
+    console.error("Error: --provider expects claude or codex.");
+    process.exit(2);
+  }
 
   const [{ loadConfig }, { run }, { banner }] = await Promise.all([
     import("./config.js"),
@@ -97,6 +103,7 @@ async function main() {
     owner,
     repo,
     token: config.token,
+    provider: opts.provider,
     model: opts.model ?? config.model,
     workdir: opts.workdir ?? config.workdir,
     fork: opts.fork,
