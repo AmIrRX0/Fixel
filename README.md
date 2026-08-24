@@ -1,13 +1,14 @@
 <div align="center">
 
-<img src="assets/banner.svg" alt="Fixel — every issue, fixed." width="100%"/>
+<img src="assets/banner.svg" alt="Fixel — label an issue, get a reviewable pull request." width="100%"/>
 
-**Every issue, fixed.**
+**Label an issue. Get a reviewable pull request.**
 
-*Label an issue → get a pull request. Fixel reads your GitHub issues, fixes them with Claude, and opens a PR for each one.*
+*Fixel is an open-source GitHub Action and CLI that turns a labeled issue into a focused code change for you to review.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-a855f7.svg)](LICENSE)
-[![Node.js ≥18](https://img.shields.io/badge/Node.js-%E2%89%A518-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
+[![CI](https://github.com/AmIrRX0/Fixel/actions/workflows/ci.yml/badge.svg)](https://github.com/AmIrRX0/Fixel/actions/workflows/ci.yml)
+[![Node.js ≥20](https://img.shields.io/badge/Node.js-%E2%89%A520-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
 [![Powered by Claude](https://img.shields.io/badge/Powered%20by-Claude-d97757)](https://claude.com)
 [![GitHub Action](https://img.shields.io/badge/GitHub-Action-2088FF?logo=githubactions&logoColor=white)](#-use-as-a-github-action)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
@@ -20,7 +21,7 @@
 
 ## 🇬🇧 English
 
-Fixel is an autonomous GitHub issue-fixing agent. Point it at a repository, it reads the open issues, fixes them with [Claude](https://claude.com) via the Claude Agent SDK, and opens a pull request per issue. If you can't push to the repo, it forks it first and opens PRs from your fork.
+Fixel is a human-gated GitHub issue-fixing agent. Point it at a repository and it uses [Claude](https://claude.com) through the Claude Agent SDK to propose a focused pull request for each selected issue. If you cannot push to the repository, Fixel can work through your fork. **It never auto-merges: review the diff and CI before merging.**
 
 ```mermaid
 flowchart LR
@@ -51,7 +52,7 @@ jobs:
       pull-requests: write
       issues: read
     steps:
-      - uses: AmIrRX0/Fixel@main
+      - uses: AmIrRX0/Fixel@v1
         with:
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -103,15 +104,17 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 
 ### 📦 Requirements
 
-- Node.js 18+ and `git`
+- Node.js 20+ and `git`
+- The [Claude Agent SDK sandbox prerequisites](https://platform.claude.com/docs/en/agent-sdk/overview) for your platform (`bubblewrap` and `socat` on Linux). The GitHub Action installs missing Linux prerequisites automatically.
 - A [GitHub token](https://github.com/settings/tokens) — classic with the `repo` scope, or fine-grained with Contents (read/write) + Issues (read) + Pull requests (read/write). In fork mode, push access is only needed on **your fork**. (As an Action, `secrets.GITHUB_TOKEN` just works.)
 - An Anthropic API key (`ANTHROPIC_API_KEY`) — or a logged-in `claude` CLI on the machine
 
 ### 🔒 Security notes
 
 - The GitHub token never appears in remote URLs or visible process arguments (a transient credential helper is used instead).
-- The agent works inside a throwaway, isolated clone and is not allowed to commit or push by itself — Fixel performs commit and push in a controlled way outside the agent session.
-- Issue text is untrusted external input; the prompt tells the agent to ignore any instructions outside the scope of the fix (leaking secrets, changing settings, …). Still, for unfamiliar repos prefer a minimal token plus `--fork` mode, and review PRs before merging.
+- The agent works inside a throwaway clone and its shell commands run in a fail-closed filesystem/network sandbox. GitHub and other host credentials are excluded; the Anthropic key is denied to sandboxed commands.
+- The agent is not allowed to commit or push by itself — Fixel performs those operations outside the agent session.
+- Issue text, comments, repository code, and tests are untrusted input. Use an isolated runner and minimum-permission token, prefer `--fork` or `--dry-run` for unfamiliar repositories, and always review generated code before merging. See the full [security policy](SECURITY.md).
 
 ### 🗺️ Roadmap
 
@@ -141,7 +144,7 @@ src/config.js   ← env loading
 
 <div dir="rtl">
 
-Fixel یک ایجنت خودکار حل ایشوهای گیت‌هاب است. یک ریپو بهش بده؛ ایشوهای باز را می‌خواند، با <a href="https://claude.com">Claude</a> و از طریق Claude Agent SDK کد را فیکس می‌کند و برای هر ایشو یک Pull Request باز می‌کند. اگر به ریپو دسترسی push نداشته باشی، اول فورک می‌زند و PRها را از فورک باز می‌کند.
+Fixel یک ایجنت حل ایشوهای گیت‌هاب با کنترل انسانی است. یک ریپو به آن بده؛ ایشوهای انتخاب‌شده را می‌خواند، با <a href="https://claude.com">Claude</a> و از طریق Claude Agent SDK یک Pull Request پیشنهادی می‌سازد. اگر دسترسی push نداشته باشی، از فورک استفاده می‌کند. <b>Fixel هیچ PRی را خودکار مرج نمی‌کند؛ diff و CI را قبل از مرج بررسی کن.</b>
 
 ### ⚡ استفاده به‌عنوان GitHub Action
 
@@ -197,7 +200,7 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 ### 📦 پیش‌نیازها
 
 <ul>
-<li>Node.js نسخه ۱۸ به بالا و <code>git</code></li>
+<li>Node.js نسخه ۲۰ به بالا و <code>git</code></li>
 <li>یک <a href="https://github.com/settings/tokens">GitHub token</a> — کلاسیک با اسکوپ <code>repo</code>، یا fine-grained با دسترسی Contents (خواندن/نوشتن) + Issues (خواندن) + Pull requests (خواندن/نوشتن). در حالت فورک، فقط روی فورکِ خودت دسترسی push لازمه. (در حالت Action همون <code>secrets.GITHUB_TOKEN</code> کافیه.)</li>
 <li>کلید API آنتروپیک (<code>ANTHROPIC_API_KEY</code>) — یا اینکه <code>claude</code> CLI روی سیستم لاگین باشه</li>
 </ul>
@@ -206,8 +209,9 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 
 <ul>
 <li>توکن گیت‌هاب هیچ‌وقت داخل URL ریموت یا آرگومان‌های قابل‌مشاهده قرار نمی‌گیره (از credential helper موقتی استفاده می‌شه).</li>
-<li>ایجنت داخل یک کلونِ موقتی و ایزوله کار می‌کنه و اجازه‌ی commit/push مستقیم نداره — کامیت و پوش رو خود Fixel به‌صورت کنترل‌شده انجام می‌ده.</li>
-<li>متن ایشوها ورودیِ خارجی و غیرقابل‌اعتماده؛ در پرامپت به ایجنت گفته شده دستورهای خارج از محدوده‌ی فیکس رو نادیده بگیره. با این حال برای ریپوهای غریبه از توکن حداقلی و حالت <code>--fork</code> استفاده کن و PRها رو قبل از مرج بازبینی کن.</li>
+<li>فرمان‌های ایجنت داخل sandbox فایل‌سیستم/شبکه با حالت fail-closed اجرا می‌شوند؛ توکن GitHub و credentialهای میزبان وارد محیط ایجنت نمی‌شوند.</li>
+<li>ایجنت اجازه‌ی commit/push مستقیم ندارد — این کارها را Fixel بیرون از session ایجنت انجام می‌دهد.</li>
+<li>متن ایشو، کامنت‌ها، کد ریپو و تست‌ها ورودی غیرقابل‌اعتماد هستند. روی runner ایزوله و با حداقل دسترسی اجرا کن، برای ریپوهای غریبه از <code>--fork</code> یا <code>--dry-run</code> استفاده کن و PR را همیشه قبل از مرج بازبینی کن. جزئیات در <a href="SECURITY.md">سیاست امنیتی</a> آمده است.</li>
 </ul>
 
 ### 🗺️ نقشه راه
@@ -228,6 +232,6 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 
 <div align="center">
 
-🔧 *Fixel — every issue, fixed.*
+🔧 *Fixel — label an issue, get a reviewable pull request.*
 
 </div>

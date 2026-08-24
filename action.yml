@@ -1,5 +1,5 @@
 name: "Fixel"
-description: "Every issue, fixed. Fixel reads a GitHub issue, fixes it with Claude, and opens a pull request."
+description: "Turn a labeled GitHub issue into a reviewable pull request with Claude."
 author: "AmIrRX0"
 branding:
   icon: "box"
@@ -40,6 +40,19 @@ runs:
     - name: Install Fixel dependencies
       shell: bash
       run: npm ci --prefix "$GITHUB_ACTION_PATH" --no-audit --no-fund
+
+    - name: Ensure Linux sandbox dependencies
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        set -euo pipefail
+        missing=()
+        command -v bwrap >/dev/null 2>&1 || missing+=(bubblewrap)
+        command -v socat >/dev/null 2>&1 || missing+=(socat)
+        if (( ${#missing[@]} > 0 )); then
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends "${missing[@]}"
+        fi
 
     - name: Run Fixel
       shell: bash
