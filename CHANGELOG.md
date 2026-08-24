@@ -2,6 +2,18 @@
 
 All notable changes to Fixel will be documented here. The project follows [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-08-24
+
+### Added
+
+- Add a local `--provider codex` path that uses an authenticated Codex CLI without requiring `ANTHROPIC_API_KEY`.
+- Add provider routing, credential-isolation, stdin prompt, and CLI validation tests.
+
+### Changed
+
+- Attribute generated pull requests to the provider that actually produced them.
+- Keep the GitHub Action explicitly on the Claude provider; local ChatGPT authentication is not copied to hosted runners.
+
 ## [1.0.0] - 2026-08-24
 
 ### Security

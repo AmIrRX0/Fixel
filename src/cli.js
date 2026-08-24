@@ -5,7 +5,7 @@ const require = createRequire(import.meta.url);
 const { version } = require("../package.json");
 
 const HELP = `
-🔧 fixel — every issue, fixed: an AI coding agent fixes issues and opens pull requests
+🔧 fixel — every issue, fixed: an AI coding agent opens reviewable pull requests
 
 Usage:
   fixel --repo <owner/name> [options]
@@ -20,7 +20,7 @@ Options:
   --labels <a,b>        Only pick issues that have these labels
   --base <branch>       Base branch for PRs (default: repo default branch)
   --provider <name>     Agent provider: claude or codex (default: claude)
-  --model <id>          Provider model (default: the provider's CLI default)
+  --model <id>          Provider-specific model id (default: provider default)
   --workdir <dir>       Where repos get cloned (default: OS temp dir)
   --dry-run             Fix locally and show the diff, but don't push or open PRs
   --verbose             Stream the agent's progress
@@ -28,16 +28,18 @@ Options:
 
 Environment:
   GITHUB_TOKEN          required — GitHub token used for API + git push
-  ANTHROPIC_API_KEY     Claude API key (Claude only; optional if logged in)
+  ANTHROPIC_API_KEY     Required only for the Claude provider
+  FIXEL_PROVIDER        Default provider when --provider is omitted
 
 Examples:
-  fixel --repo myuser/myapp --provider codex --max-issues 5
+  fixel --repo myuser/myapp --max-issues 5
+  fixel --repo myuser/myapp --provider codex --issue 42 --verbose
   fixel --repo bigorg/oss-project --fork --issue 42 --verbose
   fixel --repo myuser/myapp --labels bug,good-first-issue --dry-run
 `;
 
-export function parseArgs(argv) {
-  const opts = { provider: "claude", issues: [], labels: [], maxIssues: 3, fork: false, dryRun: false, verbose: false };
+function parseArgs(argv) {
+  const opts = { issues: [], labels: [], maxIssues: 3, fork: false, dryRun: false, verbose: false };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     const next = () => {
@@ -84,8 +86,9 @@ async function main() {
     console.error("Error: --issue expects a positive issue number.");
     process.exit(2);
   }
-  if (!["claude", "codex"].includes(opts.provider)) {
-    console.error("Error: --provider expects claude or codex.");
+  const provider = opts.provider ?? process.env.FIXEL_PROVIDER ?? "claude";
+  if (!new Set(["claude", "codex"]).has(provider)) {
+    console.error("Error: --provider must be either `claude` or `codex`.");
     process.exit(2);
   }
 
@@ -103,8 +106,8 @@ async function main() {
     owner,
     repo,
     token: config.token,
-    provider: opts.provider,
     model: opts.model ?? config.model,
+    provider,
     workdir: opts.workdir ?? config.workdir,
     fork: opts.fork,
     issues: opts.issues,

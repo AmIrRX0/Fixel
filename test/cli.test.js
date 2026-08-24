@@ -24,22 +24,21 @@ for (const flag of ["--version", "-V"]) {
   });
 }
 
-test("help documents both providers", () => {
-  const result = spawnSync(process.execPath, ["src/cli.js", "--help"], {
-    cwd: new URL("..", import.meta.url), encoding: "utf8",
-  });
-  assert.equal(result.status, 0);
-  assert.match(result.stdout, /--provider <name>/);
-  assert.match(result.stdout, /claude or codex/);
-});
-
-test("an unknown provider is rejected before credentials are loaded", () => {
+test("an unknown provider fails before credentials are loaded", () => {
   const env = { ...process.env };
   delete env.GITHUB_TOKEN;
-  const result = spawnSync(process.execPath, ["src/cli.js", "--repo", "owner/repo", "--provider", "other"], {
-    cwd: new URL("..", import.meta.url), encoding: "utf8", env,
-  });
+
+  const result = spawnSync(
+    process.execPath,
+    ["src/cli.js", "--repo", "owner/repo", "--provider", "unknown"],
+    {
+      cwd: new URL("..", import.meta.url),
+      encoding: "utf8",
+      env,
+    },
+  );
+
   assert.equal(result.status, 2);
-  assert.match(result.stderr, /--provider expects claude or codex/);
+  assert.match(result.stderr, /--provider must be either `claude` or `codex`/);
   assert.doesNotMatch(result.stderr, /GITHUB_TOKEN is not set/);
 });

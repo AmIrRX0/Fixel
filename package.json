@@ -1,6 +1,6 @@
 {
   "name": "fixel",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Turn a labeled GitHub issue into a reviewable pull request with Claude or Codex. Open-source GitHub Action and CLI with fork mode and dry runs.",
   "type": "module",
   "bin": {

@@ -9,7 +9,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-a855f7.svg)](LICENSE)
 [![CI](https://github.com/AmIrRX0/Fixel/actions/workflows/ci.yml/badge.svg)](https://github.com/AmIrRX0/Fixel/actions/workflows/ci.yml)
 [![Node.js ≥20](https://img.shields.io/badge/Node.js-%E2%89%A520-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
-[![Powered by Claude](https://img.shields.io/badge/Powered%20by-Claude-d97757)](https://claude.com)
+[![Claude provider](https://img.shields.io/badge/provider-Claude-d97757)](https://claude.com)
+[![Codex provider](https://img.shields.io/badge/provider-Codex-111827)](https://developers.openai.com/codex)
 [![GitHub Action](https://img.shields.io/badge/GitHub-Action-2088FF?logo=githubactions&logoColor=white)](#-use-as-a-github-action)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -21,13 +22,13 @@
 
 ## 🇬🇧 English
 
-Fixel is a human-gated GitHub issue-fixing agent. Point it at a repository and it uses Claude (the default) or your locally authenticated Codex CLI to propose a focused pull request for each selected issue. If you cannot push to the repository, Fixel can work through your fork. **It never auto-merges: review the diff and CI before merging.**
+Fixel is a human-gated GitHub issue-fixing agent. Point it at a repository and it uses either [Claude](https://claude.com) or a locally authenticated [Codex CLI](https://developers.openai.com/codex) to propose a focused pull request for each selected issue. If you cannot push to the repository, Fixel can work through your fork. **It never auto-merges: review the diff and CI before merging.**
 
 ```mermaid
 flowchart LR
     A["🏷️ Open issue"] --> B["🔍 Fixel reads it<br/>(+ comments)"]
     B --> C["🌿 Fresh branch<br/>fixel/issue-N"]
-    C --> D["🤖 Claude fixes<br/>the code"]
+    C --> D["🤖 Claude or Codex<br/>fixes the code"]
     D --> E["✅ Commit & push"]
     E --> F["🚀 PR opened<br/>Fixes #N"]
     F --> G["🎉 Merge →<br/>issue auto-closes"]
@@ -52,7 +53,7 @@ jobs:
       pull-requests: write
       issues: read
     steps:
-      - uses: AmIrRX0/Fixel@v1.0.0
+      - uses: AmIrRX0/Fixel@v1.1.0
         with:
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -63,6 +64,23 @@ Prefer a night shift? [`examples/nightly.yml`](examples/nightly.yml) makes Fixel
 
 ### 💻 Use as a CLI
 
+Already signed in to Codex with ChatGPT? This local path does **not** need `ANTHROPIC_API_KEY`:
+
+```bash
+codex login
+codex login status
+export GITHUB_TOKEN="your-minimum-permission-github-token"
+
+git clone https://github.com/AmIrRX0/Fixel.git
+cd Fixel
+npm install
+node src/cli.js --repo myuser/myapp --provider codex --issue 42 --verbose
+```
+
+Fixel invokes `codex exec` non-interactively with ephemeral state and a granular permission profile: project roots are writable, common credential paths are denied, and shell network access is limited to required GitHub/package hosts. ChatGPT sign-in is for **local CLI runs**; the GitHub Action still uses Claude and an `ANTHROPIC_API_KEY` because your local Codex session must not be copied to a hosted runner.
+
+Claude remains the backward-compatible default:
+
 ```bash
 git clone https://github.com/AmIrRX0/Fixel.git
 cd Fixel
@@ -72,11 +90,6 @@ cp .env.example .env   # put your tokens in it
 
 # Your own repo: fix the first 3 open issues and open PRs
 node --env-file=.env src/cli.js --repo myuser/myapp
-
-# Use an existing local ChatGPT/Codex login (no ANTHROPIC_API_KEY needed)
-npm install -g @openai/codex
-codex login
-node --env-file=.env src/cli.js --repo myuser/myapp --provider codex
 
 # Someone else's repo: fork it, fix only issue #42, stream progress
 node --env-file=.env src/cli.js --repo bigorg/oss-project --fork --issue 42 --verbose
@@ -104,25 +117,23 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 | `--max-issues <n>` | Max issues per run (default: 3) |
 | `--labels <a,b>` | Only issues carrying these labels |
 | `--base <branch>` | Base branch for PRs (default: the repo's default branch) |
-| `--provider <codex\|claude>` | Agent provider (default: `claude`) |
-| `--model <id>` | Model for the selected provider (default: its CLI default) |
+| `--provider <name>` | `claude` or `codex` (default: `claude`; also configurable with `FIXEL_PROVIDER`) |
+| `--model <id>` | Provider-specific model id (default: provider default) |
 | `--dry-run` | Fix locally and show the diff — no push, no PR |
 | `--verbose` | Stream the agent's progress step by step |
 
 ### 📦 Requirements
 
 - Node.js 20+ and `git`
-- For Claude, the [Claude Agent SDK sandbox prerequisites](https://platform.claude.com/docs/en/agent-sdk/overview) for your platform (`bubblewrap` and `socat` on Linux). The GitHub Action installs missing Linux prerequisites automatically.
 - A [GitHub token](https://github.com/settings/tokens) — classic with the `repo` scope, or fine-grained with Contents (read/write) + Issues (read) + Pull requests (read/write). In fork mode, push access is only needed on **your fork**. (As an Action, `secrets.GITHUB_TOKEN` just works.)
-- For `--provider claude`: an Anthropic API key (`ANTHROPIC_API_KEY`) or a logged-in `claude` CLI.
-- For `--provider codex`: the Codex CLI installed and authenticated with `codex login`. Fixel uses that local ChatGPT session and does not require or pass `OPENAI_API_KEY`.
-
-The Codex provider is local-only: a ChatGPT login is stored on your machine and must not be copied into GitHub Actions or other hosted runners. The bundled GitHub Action therefore always selects Claude and requires `ANTHROPIC_API_KEY`.
+- For `--provider codex`: the [Codex CLI](https://developers.openai.com/codex/cli) installed and authenticated with `codex login`; no Anthropic key is needed.
+- For `--provider claude`: the [Claude Agent SDK sandbox prerequisites](https://platform.claude.com/docs/en/agent-sdk/overview) and an `ANTHROPIC_API_KEY` (or supported local Claude authentication). The Action installs missing Linux sandbox prerequisites automatically.
 
 ### 🔒 Security notes
 
 - The GitHub token never appears in remote URLs or visible process arguments (a transient credential helper is used instead).
-- The agent works inside a throwaway clone and its shell commands run in a workspace-write sandbox. GitHub, package, cloud, and unrelated API credentials are excluded from the agent process. Codex receives only the paths needed to locate its local login; issue text is passed on stdin, never interpolated into a shell command.
+- The agent works inside a throwaway clone. Codex shell commands use a granular filesystem/network profile that explicitly denies common credential paths; GitHub, Anthropic, OpenAI, package, and unrelated host environment credentials are also excluded from the Codex process. The Claude provider independently denies common credential files and the Anthropic key to sandboxed commands.
+- Codex issue text is sent through stdin, never interpolated into a shell command or exposed as a process argument. Codex runs ephemerally without loading user config or exec-policy rules.
 - The agent is not allowed to commit or push by itself — Fixel performs those operations outside the agent session.
 - Issue text, comments, repository code, and tests are untrusted input. Use an isolated runner and minimum-permission token, prefer `--fork` or `--dry-run` for unfamiliar repositories, and always review generated code before merging. See the full [security policy](SECURITY.md).
 
@@ -140,9 +151,9 @@ The Codex provider is local-only: a ChatGPT login is stored on your machine and 
 action.yml      ← GitHub Action wrapper (label an issue → get a PR)
 src/cli.js      ← argument parsing & input validation
 src/runner.js   ← orchestration: fork/clone → pick issues → branch → agent → commit → push → PR
-src/providers.js ← provider routing (Claude or local Codex CLI)
-src/agent.js     ← one Claude Agent SDK session per issue
-src/codex.js     ← one sandboxed local Codex CLI session per issue
+src/agent.js    ← Claude Agent SDK provider
+src/codex-agent.js ← local Codex CLI provider
+src/prompt.js   ← shared untrusted-issue prompt boundary
 src/github.js   ← GitHub API via Octokit (issues, forks, PRs)
 src/git.js      ← git operations with safe authentication
 src/config.js   ← env loading
@@ -156,9 +167,7 @@ src/config.js   ← env loading
 
 <div dir="rtl">
 
-Fixel یک ایجنت حل ایشوهای گیت‌هاب با کنترل انسانی است. یک ریپو به آن بده؛ ایشوهای انتخاب‌شده را می‌خواند، با <a href="https://claude.com">Claude</a> و از طریق Claude Agent SDK یک Pull Request پیشنهادی می‌سازد. اگر دسترسی push نداشته باشی، از فورک استفاده می‌کند. <b>Fixel هیچ PRی را خودکار مرج نمی‌کند؛ diff و CI را قبل از مرج بررسی کن.</b>
-
-در اجرای محلی می‌توانی به‌جای Claude از نشست لاگین‌شده‌ی Codex/ChatGPT هم استفاده کنی؛ Claude برای سازگاری با نسخه‌های قبلی همچنان provider پیش‌فرض است.
+Fixel یک ایجنت حل ایشوهای گیت‌هاب با کنترل انسانی است. یک ریپو به آن بده؛ ایشوهای انتخاب‌شده را می‌خواند و با Claude یا Codex CLI یک Pull Request پیشنهادی می‌سازد. اگر دسترسی push نداشته باشی، از فورک استفاده می‌کند. <b>Fixel هیچ PRی را خودکار مرج نمی‌کند؛ diff و CI را قبل از مرج بررسی کن.</b>
 
 ### ⚡ استفاده به‌عنوان GitHub Action
 
@@ -167,6 +176,23 @@ Fixel یک ایجنت حل ایشوهای گیت‌هاب با کنترل انس
 ### 💻 استفاده به‌عنوان CLI
 
 </div>
+
+اگر Codex با حساب ChatGPT روی سیستم لاگین است، به `ANTHROPIC_API_KEY` نیاز نداری:
+
+```bash
+codex login
+codex login status
+export GITHUB_TOKEN="github-token-with-minimum-permissions"
+
+git clone https://github.com/AmIrRX0/Fixel.git
+cd Fixel
+npm install
+node src/cli.js --repo myuser/myapp --provider codex --issue 42 --verbose
+```
+
+این روش مخصوص اجرای لوکال است. GitHub Action همچنان از Claude و `ANTHROPIC_API_KEY` استفاده می‌کند، چون نشست شخصی Codex نباید به runner عمومی منتقل شود.
+
+برای provider پیش‌فرض Claude:
 
 ```bash
 git clone https://github.com/AmIrRX0/Fixel.git
@@ -177,11 +203,6 @@ cp .env.example .env   # توکن‌ها رو داخلش بذار
 
 # روی ریپوی خودت: ۳ تا ایشوی باز اول رو حل کن و PR بزن
 node --env-file=.env src/cli.js --repo myuser/myapp
-
-# استفاده از لاگین محلی ChatGPT، بدون ANTHROPIC_API_KEY
-npm install -g @openai/codex
-codex login
-node --env-file=.env src/cli.js --repo myuser/myapp --provider codex
 
 # روی ریپوی بقیه: فورک بزن، فقط ایشوی ۴۲ رو حل کن، پیشرفت رو هم نشون بده
 node --env-file=.env src/cli.js --repo bigorg/oss-project --fork --issue 42 --verbose
@@ -213,8 +234,8 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 | <code>--max-issues &lt;n&gt;</code> | حداکثر تعداد ایشو در هر اجرا (پیش‌فرض: ۳) |
 | <code>--labels &lt;a,b&gt;</code> | فقط ایشوهایی که این لیبل‌ها رو دارن |
 | <code>--base &lt;branch&gt;</code> | برنچ مقصد PRها (پیش‌فرض: برنچ اصلی ریپو) |
-| <code>--provider &lt;codex\|claude&gt;</code> | ارائه‌دهنده‌ی ایجنت (پیش‌فرض: <code>claude</code>) |
-| <code>--model &lt;id&gt;</code> | مدل provider انتخاب‌شده (پیش‌فرض: مدل پیش‌فرض CLI آن) |
+| <code>--provider &lt;name&gt;</code> | انتخاب <code>claude</code> یا <code>codex</code> (پیش‌فرض: <code>claude</code>) |
+| <code>--model &lt;id&gt;</code> | شناسه مدل مخصوص provider (پیش‌فرض: مدل پیش‌فرض همان provider) |
 | <code>--dry-run</code> | فقط فیکس لوکال و نمایش diff — بدون پوش و PR |
 | <code>--verbose</code> | نمایش قدم‌به‌قدم کار ایجنت |
 
@@ -223,17 +244,15 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 <ul>
 <li>Node.js نسخه ۲۰ به بالا و <code>git</code></li>
 <li>یک <a href="https://github.com/settings/tokens">GitHub token</a> — کلاسیک با اسکوپ <code>repo</code>، یا fine-grained با دسترسی Contents (خواندن/نوشتن) + Issues (خواندن) + Pull requests (خواندن/نوشتن). در حالت فورک، فقط روی فورکِ خودت دسترسی push لازمه. (در حالت Action همون <code>secrets.GITHUB_TOKEN</code> کافیه.)</li>
-<li>کلید API آنتروپیک (<code>ANTHROPIC_API_KEY</code>) — یا اینکه <code>claude</code> CLI روی سیستم لاگین باشه</li>
-<li>برای <code>--provider codex</code>، Codex CLI را نصب کن و یک‌بار <code>codex login</code> را اجرا کن. کلید <code>ANTHROPIC_API_KEY</code> لازم نیست و <code>OPENAI_API_KEY</code> هم به ایجنت داده نمی‌شود.</li>
+<li>برای <code>--provider codex</code>: نصب Codex CLI و ورود با <code>codex login</code>؛ کلید Anthropic لازم نیست.</li>
+<li>برای <code>--provider claude</code>: پیش‌نیازهای sandbox مربوط به Claude Agent SDK و <code>ANTHROPIC_API_KEY</code> یا احراز هویت پشتیبانی‌شده Claude.</li>
 </ul>
-
-provider کدکس فقط برای اجرای محلی است؛ اطلاعات لاگین ChatGPT را نباید به GitHub Actions یا runner میزبانی‌شده کپی کرد. GitHub Action فیکسل همیشه Claude را انتخاب می‌کند و به <code>ANTHROPIC_API_KEY</code> نیاز دارد.
 
 ### 🔒 نکات امنیتی
 
 <ul>
 <li>توکن گیت‌هاب هیچ‌وقت داخل URL ریموت یا آرگومان‌های قابل‌مشاهده قرار نمی‌گیره (از credential helper موقتی استفاده می‌شه).</li>
-<li>فرمان‌های ایجنت داخل sandbox با دسترسی <code>workspace-write</code> اجرا می‌شوند؛ credentialهای GitHub، پکیج، cloud و API وارد محیط ایجنت نمی‌شوند و متن ایشو از stdin فرستاده می‌شود، نه با interpolation شل.</li>
+<li>فرمان‌های ایجنت داخل sandbox اجرا می‌شوند؛ توکن GitHub و کلیدهای API یا package وارد محیط Codex نمی‌شوند. متن ایشو نیز از stdin فرستاده می‌شود و داخل فرمان shell قرار نمی‌گیرد.</li>
 <li>ایجنت اجازه‌ی commit/push مستقیم ندارد — این کارها را Fixel بیرون از session ایجنت انجام می‌دهد.</li>
 <li>متن ایشو، کامنت‌ها، کد ریپو و تست‌ها ورودی غیرقابل‌اعتماد هستند. روی runner ایزوله و با حداقل دسترسی اجرا کن، برای ریپوهای غریبه از <code>--fork</code> یا <code>--dry-run</code> استفاده کن و PR را همیشه قبل از مرج بازبینی کن. جزئیات در <a href="SECURITY.md">سیاست امنیتی</a> آمده است.</li>
 </ul>
