@@ -16,6 +16,12 @@
 
 [English](#-english) · [فارسی](#-فارسی)
 
+<a href="https://github.com/AmIrRX0/Fixel/pull/11">
+  <img src="assets/fixel-dogfood-demo.gif" alt="Verified Fixel dogfood run: issue #10 became PR #11, failed an adversarial credential probe, was hardened, passed CI, and shipped as v1.1.0." width="100%"/>
+</a>
+
+<sub><b>Verified dogfood / اجرای واقعی:</b> <a href="https://github.com/AmIrRX0/Fixel/issues/10">issue #10</a> → <a href="https://github.com/AmIrRX0/Fixel/pull/11">Fixel + Codex PR #11</a> → security review → <a href="https://github.com/AmIrRX0/Fixel/releases/tag/v1.1.0">v1.1.0</a>. The first working implementation was not merged until its credential boundary passed an adversarial probe.</sub>
+
 </div>
 
 ---
