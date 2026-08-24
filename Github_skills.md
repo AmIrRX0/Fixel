@@ -77,7 +77,7 @@ Do not run a broad launch until all P0 gates pass:
 - [x] CI runs on pushes and pull requests.
 - [x] README says that every generated PR must be reviewed before merge.
 - [x] Examples use the immutable version tag `@v1.0.0`, not mutable `@main`.
-- [ ] A release exists and the Action is installable from an immutable version.
+- [x] Release `v1.0.0` exists and the Action is installable from an immutable version.
 - [ ] A real end-to-end run is recorded; no synthetic success claim is presented as user proof.
 
 Why this comes first: public developer communities quickly reject low-quality automated PRs and opaque AI tooling. Fixel earns permission to spread by being transparent, constrained, and useful.
@@ -89,8 +89,8 @@ Why this comes first: public developer communities quickly reject low-quality au
 - [x] Outcome-led tagline is visible without scrolling.
 - [ ] 20–40 second GIF/video shows issue label -> run -> diff -> PR.
 - [ ] README separates "what it does," "try safely," and "production setup."
-- [ ] Social preview is 1280×640 and readable at thumbnail size.
-- [ ] Description and topics match the words users search for.
+- [x] Social preview is 1280×640 and readable at thumbnail size.
+- [x] Description and topics match the words users search for.
 
 ### Trust in 60 seconds
 
@@ -99,7 +99,7 @@ Why this comes first: public developer communities quickly reject low-quality au
 - [x] Supported runner/Node versions are explicit (Node.js 20+).
 - [ ] Costs, API-key requirement, permissions, and limitations are disclosed.
 - [ ] At least one reproducible example repository or issue/PR pair is linked.
-- [ ] Releases and changelog make changes auditable.
+- [x] Releases and changelog make changes auditable.
 
 ### Try in 5 minutes
 
@@ -163,7 +163,7 @@ Fill the result only after the measurement window closes.
 
 | Date | Hypothesis | Action | Primary metric | Window | Result | Decision |
 |---|---|---|---|---|---|---|
-| 2026-08-24 | Trust and versioned installation are prerequisites for effective launch conversion | Add credential isolation, adversarial tests, CI, security docs, and `@v1` examples | All P0 trust gates pass | Before launch | In progress | Pending |
+| 2026-08-24 | Trust and versioned installation are prerequisites for effective launch conversion | Add credential isolation, adversarial tests, CI, security docs, `@v1.0.0` examples, release metadata, topics, and social preview | All technical and repository P0 trust gates pass | Before launch | Passed; the remaining launch gate is a real recorded end-to-end run | Proceed to controlled dogfood before broad promotion |
 | TBD | A 20–40 second issue-to-PR demo improves repository conversion | Add an honest recorded demo above the fold | Visitor-to-star and install-click change | 7 days | — | — |
 | TBD | A technical Reddit story produces qualified testers | Publish in one rules-compatible community and answer every substantive question | Successful runs and actionable reports | 7 days | — | — |
 | TBD | A native LinkedIn build-in-public demo reaches maintainers | Publish demo + threat-model lesson | Qualified repo visits and workflow copies | 7 days | — | — |
@@ -175,6 +175,8 @@ Fill the result only after the measurement window closes.
 - **2026-08-24 — Promise a reviewable PR, not a correct fix.** This is accurate, aligns with GitHub review workflows, and addresses skepticism about AI-generated code.
 - **2026-08-24 — Pin public examples to `@v1.0.0`.** A mutable default branch is not a stable installation contract. Add a floating `v1` tag only when release automation can update it deliberately after compatible releases.
 - **2026-08-24 — Verify binary assets after remote publication.** The first PNG blob was truncated in transport while retaining a valid-looking header. Replace it with a visually verified 1280×640 JPEG and validate the fetched artifact before upload.
+- **2026-08-24 — Complete repository-native discovery before external promotion.** Publish `v1.0.0`, use immutable install examples, set an outcome-led description, add focused topics, and verify the social preview survives a settings-page reload.
+- **2026-08-24 — Move to controlled dogfood, not a broad launch yet.** The technical and repository gates now pass, but Reddit and LinkedIn promotion should wait for one reproducible issue-to-PR run that can be shown honestly.
 - **2026-08-24 — Proof must be real.** Do not add a demo, benchmark, testimonial, install number, or success rate until it is reproducible and linked.
 - **2026-08-24 — Require Node.js 20+.** The current secured Agent SDK uses RegExp set notation unavailable in Node 18. A direct Node 18 import test failed; Node 20 and 22 pass. Keeping a false Node 18 compatibility claim would create failed first runs.
 
