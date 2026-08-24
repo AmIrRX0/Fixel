@@ -74,9 +74,9 @@ Do not run a broad launch until all P0 gates pass:
 - [x] Agent commands run in a fail-closed sandbox with a strict network allowlist.
 - [x] Issue text and comments are explicitly treated as untrusted input.
 - [x] Tests exercise the secret boundary and sandbox options.
-- [ ] CI runs on pushes and pull requests.
+- [x] CI runs on pushes and pull requests.
 - [x] README says that every generated PR must be reviewed before merge.
-- [x] Examples use a version tag such as `@v1`, not mutable `@main`.
+- [x] Examples use the immutable version tag `@v1.0.0`, not mutable `@main`.
 - [ ] A release exists and the Action is installable from an immutable version.
 - [ ] A real end-to-end run is recorded; no synthetic success claim is presented as user proof.
 
@@ -86,7 +86,7 @@ Why this comes first: public developer communities quickly reject low-quality au
 
 ### Understand in 10 seconds
 
-- [ ] Outcome-led tagline is visible without scrolling.
+- [x] Outcome-led tagline is visible without scrolling.
 - [ ] 20–40 second GIF/video shows issue label -> run -> diff -> PR.
 - [ ] README separates "what it does," "try safely," and "production setup."
 - [ ] Social preview is 1280×640 and readable at thumbnail size.
@@ -94,8 +94,8 @@ Why this comes first: public developer communities quickly reject low-quality au
 
 ### Trust in 60 seconds
 
-- [ ] CI badge is green.
-- [ ] Security model and threat boundaries are documented.
+- [x] CI badge is green.
+- [x] Security model and threat boundaries are documented.
 - [x] Supported runner/Node versions are explicit (Node.js 20+).
 - [ ] Costs, API-key requirement, permissions, and limitations are disclosed.
 - [ ] At least one reproducible example repository or issue/PR pair is linked.
@@ -103,9 +103,9 @@ Why this comes first: public developer communities quickly reject low-quality au
 
 ### Try in 5 minutes
 
-- [ ] Copy-paste Action example uses `AmIrRX0/Fixel@v1`.
-- [ ] Minimal required permissions are shown.
-- [ ] Dry-run path is prominent.
+- [x] Copy-paste Action example uses `AmIrRX0/Fixel@v1.0.0`.
+- [x] Minimal required permissions are shown.
+- [x] Dry-run path is prominent.
 - [ ] Failure messages explain missing prerequisites.
 - [ ] A beginner can reach the first safe run without reading the entire README.
 
@@ -173,7 +173,8 @@ Fill the result only after the measurement window closes.
 - **2026-08-24 — Optimize for real use, not artificial stars.** Bought/fake stars damage credibility and do not create users.
 - **2026-08-24 — Secure before launch.** Issue bodies and comments are untrusted; prompt instructions alone are not a security boundary. The agent environment must exclude tokens and its command sandbox must fail closed.
 - **2026-08-24 — Promise a reviewable PR, not a correct fix.** This is accurate, aligns with GitHub review workflows, and addresses skepticism about AI-generated code.
-- **2026-08-24 — Pin public examples to `@v1`.** A mutable default branch is not a stable installation contract.
+- **2026-08-24 — Pin public examples to `@v1.0.0`.** A mutable default branch is not a stable installation contract. Add a floating `v1` tag only when release automation can update it deliberately after compatible releases.
+- **2026-08-24 — Verify binary assets after remote publication.** The first PNG blob was truncated in transport while retaining a valid-looking header. Replace it with a visually verified 1280×640 JPEG and validate the fetched artifact before upload.
 - **2026-08-24 — Proof must be real.** Do not add a demo, benchmark, testimonial, install number, or success rate until it is reproducible and linked.
 - **2026-08-24 — Require Node.js 20+.** The current secured Agent SDK uses RegExp set notation unavailable in Node 18. A direct Node 18 import test failed; Node 20 and 22 pass. Keeping a false Node 18 compatibility claim would create failed first runs.
 
