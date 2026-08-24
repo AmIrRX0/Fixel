@@ -2,7 +2,7 @@
 
 All notable changes to Fixel will be documented here. The project follows [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## [1.0.0] - 2026-08-24
 
 ### Security
 
@@ -21,4 +21,4 @@ All notable changes to Fixel will be documented here. The project follows [Seman
 - Pin the Claude Agent SDK to an audited exact version.
 - Require Node.js 20 or newer for the current Claude Agent SDK and sandbox runtime.
 - Position Fixel as producing a reviewable pull request, preserving human review as the final gate.
-- Use the stable `v1` Action reference in installation examples.
+- Use the immutable `v1.0.0` Action reference in installation examples.
