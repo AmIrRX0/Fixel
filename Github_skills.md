@@ -53,7 +53,7 @@ Primary promise:
 
 Repository description:
 
-> Turn a labeled GitHub issue into a reviewable pull request with Claude. Open-source GitHub Action + CLI with fork mode and dry runs.
+> Turn a labeled GitHub issue into a reviewable pull request with Claude or Codex. Open-source GitHub Action + CLI with fork mode and dry runs.
 
 Why this wording:
 
@@ -64,7 +64,7 @@ Why this wording:
 
 Recommended topics:
 
-`github-actions`, `ai-agent`, `coding-agent`, `github-issues`, `pull-request`, `automation`, `claude`, `claude-code`, `developer-tools`, `open-source`, `nodejs`, `devops`
+`github-actions`, `ai-agent`, `coding-agent`, `github-issues`, `pull-request`, `automation`, `claude`, `claude-code`, `codex`, `openai`, `developer-tools`, `open-source`, `nodejs`, `devops`
 
 ## Trust gates before promotion
 
@@ -76,9 +76,9 @@ Do not run a broad launch until all P0 gates pass:
 - [x] Tests exercise the secret boundary and sandbox options.
 - [x] CI runs on pushes and pull requests.
 - [x] README says that every generated PR must be reviewed before merge.
-- [x] Examples use the immutable version tag `@v1.0.0`, not mutable `@main`.
-- [x] Release `v1.0.0` exists and the Action is installable from an immutable version.
-- [ ] A real Fixel/Claude end-to-end run is recorded; no synthetic success claim is presented as user proof.
+- [x] Examples use the immutable version tag `@v1.1.0`, not mutable `@main`.
+- [x] Release `v1.1.0` exists and the Action is installable from an immutable version.
+- [x] A real Fixel/Codex end-to-end run is recorded: [issue #10](https://github.com/AmIrRX0/Fixel/issues/10) -> [PR #11](https://github.com/AmIrRX0/Fixel/pull/11) -> [release v1.1.0](https://github.com/AmIrRX0/Fixel/releases/tag/v1.1.0).
 
 Why this comes first: public developer communities quickly reject low-quality automated PRs and opaque AI tooling. Fixel earns permission to spread by being transparent, constrained, and useful.
 
@@ -98,12 +98,13 @@ Why this comes first: public developer communities quickly reject low-quality au
 - [x] Security model and threat boundaries are documented.
 - [x] Supported runner/Node versions are explicit (Node.js 20+).
 - [ ] Costs, API-key requirement, permissions, and limitations are disclosed.
-- [x] A reproducible Codex-assisted example is linked: [issue #7](https://github.com/AmIrRX0/Fixel/issues/7) -> [PR #8](https://github.com/AmIrRX0/Fixel/pull/8). It is not presented as a Fixel/Claude run.
+- [x] A reproducible Codex-assisted maintenance example is linked: [issue #7](https://github.com/AmIrRX0/Fixel/issues/7) -> [PR #8](https://github.com/AmIrRX0/Fixel/pull/8).
+- [x] A real Fixel/Codex product run is linked separately: [issue #10](https://github.com/AmIrRX0/Fixel/issues/10) -> [PR #11](https://github.com/AmIrRX0/Fixel/pull/11).
 - [x] Releases and changelog make changes auditable.
 
 ### Try in 5 minutes
 
-- [x] Copy-paste Action example uses `AmIrRX0/Fixel@v1.0.0`.
+- [x] Copy-paste Action example uses `AmIrRX0/Fixel@v1.1.0`.
 - [x] Minimal required permissions are shown.
 - [x] Dry-run path is prominent.
 - [ ] Failure messages explain missing prerequisites.
@@ -165,6 +166,7 @@ Fill the result only after the measurement window closes.
 |---|---|---|---|---|---|---|
 | 2026-08-24 | Trust and versioned installation are prerequisites for effective launch conversion | Add credential isolation, adversarial tests, CI, security docs, `@v1.0.0` examples, release metadata, topics, and social preview | All technical and repository P0 trust gates pass | Before launch | Passed; the remaining launch gate is a real recorded end-to-end run | Proceed to controlled dogfood before broad promotion |
 | 2026-08-24 | A ChatGPT-authenticated Codex CLI can produce an honest issue-to-PR maintenance case study | Create [issue #7](https://github.com/AmIrRX0/Fixel/issues/7), generate the fix with Codex in a workspace-write sandbox, independently test it, and merge [PR #8](https://github.com/AmIrRX0/Fixel/pull/8) after CI | Issue closed by a reviewed, CI-green PR | Before promotion | Passed: 5 tests and package check passed; PR #8 merged and closed issue #7 | Use as Codex-assisted build-in-public proof, not as proof that Fixel v1.0.0 ran successfully |
+| 2026-08-24 | A local Codex provider can remove the Anthropic-key blocker without weakening the credential boundary | Use Fixel itself to solve [issue #10](https://github.com/AmIrRX0/Fixel/issues/10), adversarially probe the generated sandbox, harden it, merge [PR #11](https://github.com/AmIrRX0/Fixel/pull/11), and publish [v1.1.0](https://github.com/AmIrRX0/Fixel/releases/tag/v1.1.0) | A real CI-green PR opens without `ANTHROPIC_API_KEY`, and credential-content access is blocked | Before promotion | Passed: Fixel opened PR #11; initial probe found readable Codex auth, granular permissions changed the result to `AUTH_CONTENT_BLOCKED`; workspace write, 10 tests, Node 20/22 CI, and package check passed | Use this honest find-and-fix story as the primary launch proof |
 | TBD | A 20–40 second issue-to-PR demo improves repository conversion | Add an honest recorded demo above the fold | Visitor-to-star and install-click change | 7 days | — | — |
 | TBD | A technical Reddit story produces qualified testers | Publish in one rules-compatible community and answer every substantive question | Successful runs and actionable reports | 7 days | — | — |
 | TBD | A native LinkedIn build-in-public demo reaches maintainers | Publish demo + threat-model lesson | Qualified repo visits and workflow copies | 7 days | — | — |
@@ -182,6 +184,7 @@ Fill the result only after the measurement window closes.
 - **2026-08-24 — Keep provider attribution exact.** Codex successfully generated the fix for issue #7 using the repository owner's ChatGPT-authenticated Codex CLI; PR #8 passed CI and was merged. This validates the maintenance workflow and provides an honest Codex-assisted case study, but it must not be marketed as a Fixel/Claude-generated PR.
 - **2026-08-24 — Separate local auth from hosted automation.** A ChatGPT-authenticated Codex CLI is a valid local Fixel provider and removes the Anthropic-key requirement for local dogfood. It is not a deployable GitHub Actions credential: keep the hosted Action on an explicit provider credential, pass untrusted issue text through stdin, and never expose GitHub or API tokens to the agent subprocess.
 - **2026-08-24 — Verify sandbox claims with adversarial smoke tests.** Fixel's first Codex dogfood run opened [PR #11](https://github.com/AmIrRX0/Fixel/pull/11) without `ANTHROPIC_API_KEY`, but a follow-up probe showed that the legacy `workspace-write` profile could read `~/.codex/auth.json`. Do not rely on the profile name or prompt rules as a credential boundary. Use a granular Codex permission profile that writes only project roots, explicitly denies Codex/SSH/cloud/package credential paths, and allows only required network domains. The same non-disclosing probe then returned `AUTH_CONTENT_BLOCKED`.
+- **2026-08-24 — Promotion gate passed with qualified proof.** PR #11 passed Node 20/22 CI, closed issue #10 on merge, and shipped as v1.1.0. External promotion may now use the real issue-to-PR story, including the sandbox flaw found during review. The next conversion asset is a short capture of this verified flow—not a staged claim.
 - **2026-08-24 — Proof must be real.** Do not add a demo, benchmark, testimonial, install number, or success rate until it is reproducible and linked.
 - **2026-08-24 — Require Node.js 20+.** The current secured Agent SDK uses RegExp set notation unavailable in Node 18. A direct Node 18 import test failed; Node 20 and 22 pass. Keeping a false Node 18 compatibility claim would create failed first runs.
 
@@ -192,3 +195,6 @@ Fill the result only after the measurement window closes.
 - [GitHub Docs: Releasing and maintaining actions](https://docs.github.com/en/actions/sharing-automations/creating-actions/releasing-and-maintaining-actions)
 - [GitHub Docs: Publishing actions in GitHub Marketplace](https://docs.github.com/en/actions/sharing-automations/creating-actions/publishing-actions-in-github-marketplace)
 - [Anthropic Claude Agent SDK documentation](https://platform.claude.com/docs/en/agent-sdk/overview)
+- [OpenAI Codex authentication](https://learn.chatgpt.com/docs/auth)
+- [OpenAI Codex developer commands](https://learn.chatgpt.com/docs/developer-commands?surface=cli)
+- [OpenAI Codex sandboxing](https://learn.chatgpt.com/docs/sandboxing)
