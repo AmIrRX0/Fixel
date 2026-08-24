@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="1200" height="360" role="img" aria-label="Fixel — every issue, fixed.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="1200" height="360" role="img" aria-label="Fixel — label an issue, get a reviewable pull request.">
   <defs>
     <linearGradient id="fx" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#4fd9f6"/>
@@ -28,7 +28,7 @@
         font-size="150" font-weight="700" fill="#ffffff">fixel</text>
   <text x="328" y="284" font-family="Segoe UI, Helvetica, Arial, sans-serif"
         font-size="26" font-weight="600" fill="#8b95a5"
-        letter-spacing="10">EVERY ISSUE, FIXED.</text>
+        letter-spacing="5">LABEL AN ISSUE. REVIEW THE PR.</text>
 
   <!-- faint pixels drifting on the right, for balance -->
   <rect x="1046" y="84"  width="26" height="26" fill="#1877ec" opacity="0.55"/>
