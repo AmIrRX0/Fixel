@@ -74,7 +74,7 @@ Representative examples:
 
 Important distinction: GitHub Trending and public launch posts establish correlation and timing, not full causality. Only repository owners can see complete traffic and star-conversion analytics. Use these patterns as testable hypotheses rather than promises.
 
-Implication for Fixel: repository conversion is no longer the largest missing piece. Fixel already has an outcome-led tagline, verified GIF, real issue-to-PR proof, security boundaries, Codex/Claude paths, CI, and releases. Its remaining gap is a distribution-worthy product story with an independently useful novelty and measurable evidence. The best candidate remains **Never Fail Twice**: turn CI failures and reviewer corrections into versioned regression cases, then demonstrate the same issue failing once and passing after the learned rule. Pair that product proof with a specific community story and a repeated feedback/release loop instead of another generic announcement.
+Implication for Fixel: repository conversion is no longer the largest missing piece. Fixel already has an outcome-led tagline, verified GIF, real issue-to-PR proof, security boundaries, Codex/Claude paths, CI, and releases. The **Never Fail Twice** wedge shipped in [PR #16](https://github.com/AmIrRX0/Fixel/pull/16) and [v1.2.0](https://github.com/AmIrRX0/Fixel/releases/tag/v1.2.0): turn PR/review/CI evidence into an inert lesson draft, require maintainer approval, then make approved rules and regression commands available to future runs. The next missing proof is an agent-level baseline-versus-learned replay and an external maintainer outcome; the current 1/1 benchmark verifies the safety/promotion gate only.
 
 ## Positioning
 
@@ -107,8 +107,8 @@ Do not run a broad launch until all P0 gates pass:
 - [x] Tests exercise the secret boundary and sandbox options.
 - [x] CI runs on pushes and pull requests.
 - [x] README says that every generated PR must be reviewed before merge.
-- [x] Examples use the immutable version tag `@v1.1.0`, not mutable `@main`.
-- [x] Release `v1.1.0` exists and the Action is installable from an immutable version.
+- [x] Examples use the immutable version tag `@v1.2.0`, not mutable `@main`.
+- [x] Release `v1.2.0` exists and the Action is installable from an immutable version.
 - [x] A real Fixel/Codex end-to-end run is recorded: [issue #10](https://github.com/AmIrRX0/Fixel/issues/10) -> [PR #11](https://github.com/AmIrRX0/Fixel/pull/11) -> [release v1.1.0](https://github.com/AmIrRX0/Fixel/releases/tag/v1.1.0).
 
 Why this comes first: public developer communities quickly reject low-quality automated PRs and opaque AI tooling. Fixel earns permission to spread by being transparent, constrained, and useful.
@@ -135,7 +135,7 @@ Why this comes first: public developer communities quickly reject low-quality au
 
 ### Try in 5 minutes
 
-- [x] Copy-paste Action example uses `AmIrRX0/Fixel@v1.1.0`.
+- [x] Copy-paste Action example uses `AmIrRX0/Fixel@v1.2.0`.
 - [x] Minimal required permissions are shown.
 - [x] Dry-run path is prominent.
 - [ ] Failure messages explain missing prerequisites.
@@ -203,6 +203,7 @@ Fill the result only after the measurement window closes.
 | 2026-08-24 | A LinkedIn build-in-public security story reaches maintainers | Publish the honest sandbox find-and-fix case study with repository, release, and PR proof in a [public LinkedIn post](https://www.linkedin.com/feed/update/urn:li:activity:7497522057832804353/) | Qualified repo visits, workflow copies, and test reports | 7 days | 9-hour snapshot: 47 impressions, 38 members reached, 1 reaction, 0 comments/reposts/saves/sends, 0 post-attributed profile views/follows; GitHub referrer showed 4 views from 2 unique visitors | Keep the original post; after at least 24 hours test a shorter native visual post using the verified demo rather than repeating the same copy |
 | 2026-08-25 | A shorter native demo post can improve qualified reach over the first text-led LinkedIn post | Publish the verified 21-second dogfood GIF with the security-review hook and one repository link in a [public LinkedIn post](https://www.linkedin.com/feed/update/urn:li:activity:7497910845801345024/) | Qualified repository visitors, external trials, and actionable replies | 24 hours / 7 days | Early snapshot at 28 minutes: 54 impressions, public visibility, 0 visible reactions/comments/reposts; too early to judge | Leave it live and collect the 24-hour snapshot before changing the creative or posting another promotion |
 | 2026-08-26 | Permission-based design partners will produce more credible proof than another broad promotional post | Search current unassigned good-first issues, reject claimed/duplicated/unlicensed/high-risk candidates, rank 10 eligible repositories, and prepare three personalized permission requests | Consenting maintainers, completed dry runs, external reviewed PRs | 7 days | [Permission request sent](https://github.com/rolecraft-sh/rolecraft/issues/236#issuecomment-5422496127) on `rolecraft-sh/rolecraft#236`; awaiting maintainer response; no Fixel run or external PR yet | Wait for explicit consent; do not bump the thread or contact the second candidate before the response window closes |
+| 2026-08-26 | A memorable, evidence-gated learning loop gives Fixel a more distinctive product story than generic issue-to-PR automation | Implement `fixel learn`, approved-only bounded lesson loading, a real PR #11 lesson, prompt safety ordering, and a deterministic gate benchmark in [PR #16](https://github.com/AmIrRX0/Fixel/pull/16); publish [v1.2.0](https://github.com/AmIrRX0/Fixel/releases/tag/v1.2.0) | CI, gate benchmark, reproducible capture/promotion workflow, then external learned-run outcome | Before launch / 7 days | Implementation passed 18 tests on Node 20/22, benchmark 1/1, main CI, package verification, and release publication; no external learned-run outcome yet | Use the release as the next technical story only after recording a baseline-versus-learned replay; do not market the gate benchmark as model-quality proof |
 
 ## Funnel snapshot — 2026-08-25
 
@@ -232,6 +233,7 @@ Seven-day success criterion: **3 consenting maintainers contacted, 2 completed d
 ## Decision journal
 
 - **2026-08-26 — Build measured self-improvement, not unrestricted self-modification.** The strongest extension for Fixel is a repository-native learning loop: turn CI failures, rejected diffs, and reviewer corrections into versioned regression cases and reusable repository rules; replay them before future PRs; promote a new prompt, policy, or strategy only when it improves the benchmark without regressions. The memorable promise is: **“Every rejected PR becomes a test your coding agent should never fail twice.”** Autonomous collection, analysis, scoring, and drafting are acceptable; posting, opening PRs, changing permissions, or modifying hard safety policy remains human-gated.
+- **2026-08-26 — Ship the learning gate before claiming agent improvement.** Version 1.2.0 captures PR/review/check evidence as `draft`, loads only bounded regular Markdown files explicitly marked `approved`, and places immutable safety rules after lesson content. The 1/1 benchmark proves the promotion and prompt gate, not that an agent's solve rate improved; that claim requires a reproducible baseline-versus-learned replay.
 
 - **2026-08-24 — Optimize for real use, not artificial stars.** Bought/fake stars damage credibility and do not create users.
 - **2026-08-24 — Secure before launch.** Issue bodies and comments are untrusted; prompt instructions alone are not a security boundary. The agent environment must exclude tokens and its command sandbox must fail closed.
