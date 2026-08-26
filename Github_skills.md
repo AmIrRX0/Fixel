@@ -138,6 +138,7 @@ Why this comes first: public developer communities quickly reject low-quality au
 - [x] Copy-paste Action example uses `AmIrRX0/Fixel@v1.2.0`.
 - [x] Minimal required permissions are shown.
 - [x] Dry-run path is prominent.
+- [x] The released CLI can run without a clone or package install via `npx --yes github:AmIrRX0/Fixel#v1.2.0`; the exact command returned version `1.2.0` in a fresh temporary directory.
 - [ ] Failure messages explain missing prerequisites.
 - [ ] A beginner can reach the first safe run without reading the entire README.
 

@@ -89,6 +89,15 @@ codex login
 codex login status
 export GITHUB_TOKEN="your-minimum-permission-github-token"
 
+# Run the released CLI directly from GitHub — no clone or npm install
+npx --yes github:AmIrRX0/Fixel#v1.2.0 --repo myuser/myapp --provider codex --issue 42 --verbose
+```
+
+Or clone it when you want the source locally:
+
+```bash
+export GITHUB_TOKEN="your-minimum-permission-github-token"
+
 git clone https://github.com/AmIrRX0/Fixel.git
 cd Fixel
 npm install

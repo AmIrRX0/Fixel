@@ -11,6 +11,12 @@ Fixel can preserve a reviewed failure as a version-controlled repository lesson 
    fixel learn --repo owner/repository --pr 42
    ```
 
+   Without cloning or installing Fixel first:
+
+   ```bash
+   npx --yes github:AmIrRX0/Fixel#v1.2.0 learn --repo owner/repository --pr 42
+   ```
+
 2. Open `.fixel/lessons/pr-42.md`. It starts with `status: draft` and is ignored by every Fixel fix run.
 3. Replace the Rule, Regression command, and Scope placeholders. Remove irrelevant or sensitive evidence.
 4. Verify the regression command, then change the frontmatter to `status: approved` in a human-reviewed commit.
