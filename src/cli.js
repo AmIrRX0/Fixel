@@ -9,6 +9,7 @@ const HELP = `
 
 Usage:
   fixel --repo <owner/name> [options]
+  fixel learn --repo <owner/name> --pr <n> [--output <path>]
 
 Options:
   --repo <owner/name>   Target repository (required)
@@ -24,6 +25,8 @@ Options:
   --workdir <dir>       Where repos get cloned (default: OS temp dir)
   --dry-run             Fix locally and show the diff, but don't push or open PRs
   --verbose             Stream the agent's progress
+  --pr <n>              Pull request to learn from (learn command only)
+  --output <path>       Lesson draft path (default: .fixel/lessons/pr-N.md)
   -h, --help            Show this help
 
 Environment:
@@ -36,11 +39,17 @@ Examples:
   fixel --repo myuser/myapp --provider codex --issue 42 --verbose
   fixel --repo bigorg/oss-project --fork --issue 42 --verbose
   fixel --repo myuser/myapp --labels bug,good-first-issue --dry-run
+  fixel learn --repo myuser/myapp --pr 42
 `;
 
 function parseArgs(argv) {
-  const opts = { issues: [], labels: [], maxIssues: 3, fork: false, dryRun: false, verbose: false };
-  for (let i = 0; i < argv.length; i++) {
+  const opts = { command: "fix", issues: [], labels: [], maxIssues: 3, fork: false, dryRun: false, verbose: false };
+  let start = 0;
+  if (argv[0] === "learn") {
+    opts.command = "learn";
+    start = 1;
+  }
+  for (let i = start; i < argv.length; i++) {
     const arg = argv[i];
     const next = () => {
       const v = argv[++i];
@@ -59,6 +68,8 @@ function parseArgs(argv) {
       case "--workdir": opts.workdir = next(); break;
       case "--dry-run": opts.dryRun = true; break;
       case "--verbose": opts.verbose = true; break;
+      case "--pr": opts.pr = Number(next()); break;
+      case "--output": opts.output = next(); break;
       case "-V":
       case "--version": console.log(version); process.exit(0);
       case "-h":
@@ -86,21 +97,50 @@ async function main() {
     console.error("Error: --issue expects a positive issue number.");
     process.exit(2);
   }
+  if (opts.command === "learn" && (!Number.isInteger(opts.pr) || opts.pr <= 0)) {
+    console.error("Error: `fixel learn` requires --pr with a positive pull request number.");
+    process.exit(2);
+  }
+  if (opts.command === "fix" && opts.pr !== undefined) {
+    console.error("Error: --pr is available only with `fixel learn`.");
+    process.exit(2);
+  }
+  if (opts.command === "fix" && opts.output !== undefined) {
+    console.error("Error: --output is available only with `fixel learn`.");
+    process.exit(2);
+  }
   const provider = opts.provider ?? process.env.FIXEL_PROVIDER ?? "claude";
   if (!new Set(["claude", "codex"]).has(provider)) {
     console.error("Error: --provider must be either `claude` or `codex`.");
     process.exit(2);
   }
 
-  const [{ loadConfig }, { run }, { banner }] = await Promise.all([
+  const [{ loadConfig }, { banner }] = await Promise.all([
     import("./config.js"),
-    import("./runner.js"),
     import("./ui.js"),
   ]);
 
   console.log(banner());
   const config = loadConfig();
   const [owner, repo] = opts.repo.split("/");
+
+  if (opts.command === "learn") {
+    const { createLessonDraft } = await import("./learning.js");
+    const result = await createLessonDraft({
+      owner,
+      repo,
+      prNumber: opts.pr,
+      token: config.token,
+      outputPath: opts.output,
+    });
+    console.log(`Lesson draft created: ${result.outputPath}`);
+    console.log(`Captured ${result.evidenceCount} review/CI evidence item(s) from ${result.sourceUrl}.`);
+    for (const warning of result.warnings) console.warn(`Warning: ${warning}`);
+    console.log("Review the draft and promotion checklist before changing `status: draft` to `status: approved`.");
+    return;
+  }
+
+  const { run } = await import("./runner.js");
 
   const results = await run({
     owner,

@@ -196,6 +196,7 @@ export async function solveIssueWithCodex({
   repoDir,
   issue,
   comments,
+  lessons = [],
   model,
   onProgress,
   processEnv = process.env,
@@ -203,7 +204,7 @@ export async function solveIssueWithCodex({
 }) {
   const summary = await runCodexFn({
     repoDir,
-    prompt: buildPrompt(issue, comments),
+    prompt: buildPrompt(issue, comments, lessons),
     model,
     onProgress,
     processEnv,

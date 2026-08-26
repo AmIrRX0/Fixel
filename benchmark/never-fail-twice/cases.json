@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {
+      "id": "pr-11-credential-boundary",
+      "sourcePr": "https://github.com/AmIrRX0/Fixel/pull/11",
+      "lessonFile": "pr-11.md",
+      "expectedPhrases": [
+        "explicit environment allowlist",
+        "untrusted issue text through stdin",
+        "fail-closed filesystem permissions"
+      ]
+    }
+  ]
+}

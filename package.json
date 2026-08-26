@@ -1,6 +1,6 @@
 {
   "name": "fixel",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Turn a labeled GitHub issue into a reviewable pull request with Claude or Codex. Open-source GitHub Action and CLI with fork mode and dry runs.",
   "type": "module",
   "bin": {
@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node src/cli.js",
     "test": "node --test",
-    "check": "npm test && npm pack --dry-run"
+    "benchmark:lessons": "node benchmark/never-fail-twice/run.js",
+    "check": "npm test && npm run benchmark:lessons && npm pack --dry-run"
   },
   "engines": {
     "node": ">=20"
