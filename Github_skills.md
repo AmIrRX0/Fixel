@@ -45,6 +45,37 @@ The repeated pattern is not "make a long README." It is:
 4. Provide trust signals: tests, CI, security boundaries, releases, and honest limitations.
 5. Launch to a specific audience with a useful story, then respond to feedback quickly.
 
+### Cross-sectional Trending study — 2026-08-26
+
+This second sample used GitHub's live daily, weekly, and monthly Trending pages. Brand-owned incumbents such as OpenAI Codex, Microsoft AI for Beginners, PostHog, and `public-apis` were excluded from the reusable-pattern analysis because their existing distribution makes them poor comparisons for Fixel. The independent sample contained 12 repositories: OpenLogi, MoneyPrinterTurbo, Apache Maka, OpenViking, awesome-gpt-image-2, ai-memory, omlx, AI-Infra-Guard, nodeterm, ego-lite, i-have-adhd, and book-to-skill.
+
+Observed conversion signals in the 12-repository sample:
+
+| Signal | Observed prevalence |
+|---|---:|
+| README contains visual media or output imagery | 12 / 12 |
+| Clear install, quick-start, getting-started, or usage path | 11 / 12 |
+| Performance, benchmark, latency, or token-efficiency evidence | 9 / 12 |
+| More than one language represented | 8 / 12 |
+| Versioned GitHub releases | 10 / 12 |
+
+The strongest common pattern is:
+
+`recognizable pain × one-sentence transformation × visible proof × low-friction trial × timely ecosystem × community feedback × repeated releases`
+
+Representative examples:
+
+- [OpenLogi](https://github.com/AprilNEA/OpenLogi) names a familiar opponent (Logitech Options+), promises local-first/no-account/no-telemetry operation, supports direct downloads and Homebrew, and gained about 7,648 stars during the observed week.
+- [MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo) turns one topic into a finished short video, shows the UI/output, serves a much larger creator audience than developers alone, supports multiple languages and installation paths, and gained about 9,019 stars during the observed week.
+- [OpenViking](https://github.com/volcengine/OpenViking) targets the current agent-context bottleneck, differentiates with a filesystem metaphor, publishes a live demo, docs, benchmarks, multilingual material, Discord/X/community links, and frequent releases; it gained about 4,211 stars during the observed week.
+- [i-have-adhd](https://github.com/ayghri/i-have-adhd) packages a painfully recognizable complaint into a memorable name, shows a concrete before/after, and installs through a copy-pasted instruction. A third-party Reddit post describing the immediate benefit received roughly 2,900 votes; the repository gained about 14,431 stars during the observed month.
+- [book-to-skill](https://github.com/virgiliojr94/book-to-skill) expresses a transformation in its name, explains the workflow in three steps, publishes a reproducible 24x–51x token claim, and grew through repeated community feedback. Its author reported that subreddit requests became roadmap items before it reached GitHub Trending; the repository gained about 15,982 stars during the observed month.
+- [nodeterm](https://github.com/eneskirca/nodeterm) makes a visually shareable product, puts a 30-second tour near the top, contrasts a spatial canvas with hidden terminal tabs, and offers packaged downloads instead of requiring a source build.
+
+Important distinction: GitHub Trending and public launch posts establish correlation and timing, not full causality. Only repository owners can see complete traffic and star-conversion analytics. Use these patterns as testable hypotheses rather than promises.
+
+Implication for Fixel: repository conversion is no longer the largest missing piece. Fixel already has an outcome-led tagline, verified GIF, real issue-to-PR proof, security boundaries, Codex/Claude paths, CI, and releases. Its remaining gap is a distribution-worthy product story with an independently useful novelty and measurable evidence. The best candidate remains **Never Fail Twice**: turn CI failures and reviewer corrections into versioned regression cases, then demonstrate the same issue failing once and passing after the learned rule. Pair that product proof with a specific community story and a repeated feedback/release loop instead of another generic announcement.
+
 ## Positioning
 
 Primary promise:
@@ -170,8 +201,37 @@ Fill the result only after the measurement window closes.
 | 2026-08-24 | A 20–40 second issue-to-PR demo improves repository conversion | Add an honest 21-second, 4-frame dogfood demo above the fold in [PR #14](https://github.com/AmIrRX0/Fixel/pull/14) | Visitor-to-star and install-click change | 7 days | Asset is live; conversion result pending from the next qualified traffic wave | Use the animation as the native visual for the second LinkedIn test and keep every frame tied to issue #10 / PR #11 evidence |
 | 2026-08-24 | A technical Reddit story produces qualified testers | Publish a disclosed-builder comment in the official [r/github self-promotion megathread](https://www.reddit.com/r/github/comments/1jy8rea/comment/p5jmxhs/) and answer every substantive question | Successful runs and actionable reports | 7 days | Distribution failed: public Reddit data returned `[removed]`, score 1, no replies, and GitHub recorded no Reddit referrer | Ask moderators to review the removal; do not repost or evade the filter without permission, then use a shorter one-link version if allowed |
 | 2026-08-24 | A LinkedIn build-in-public security story reaches maintainers | Publish the honest sandbox find-and-fix case study with repository, release, and PR proof in a [public LinkedIn post](https://www.linkedin.com/feed/update/urn:li:activity:7497522057832804353/) | Qualified repo visits, workflow copies, and test reports | 7 days | 9-hour snapshot: 47 impressions, 38 members reached, 1 reaction, 0 comments/reposts/saves/sends, 0 post-attributed profile views/follows; GitHub referrer showed 4 views from 2 unique visitors | Keep the original post; after at least 24 hours test a shorter native visual post using the verified demo rather than repeating the same copy |
+| 2026-08-25 | A shorter native demo post can improve qualified reach over the first text-led LinkedIn post | Publish the verified 21-second dogfood GIF with the security-review hook and one repository link in a [public LinkedIn post](https://www.linkedin.com/feed/update/urn:li:activity:7497910845801345024/) | Qualified repository visitors, external trials, and actionable replies | 24 hours / 7 days | Early snapshot at 28 minutes: 54 impressions, public visibility, 0 visible reactions/comments/reposts; too early to judge | Leave it live and collect the 24-hour snapshot before changing the creative or posting another promotion |
+| 2026-08-26 | Permission-based design partners will produce more credible proof than another broad promotional post | Search current unassigned good-first issues, reject claimed/duplicated/unlicensed/high-risk candidates, rank 10 eligible repositories, and prepare three personalized permission requests | Consenting maintainers, completed dry runs, external reviewed PRs | 7 days | [Permission request sent](https://github.com/rolecraft-sh/rolecraft/issues/236#issuecomment-5422496127) on `rolecraft-sh/rolecraft#236`; awaiting maintainer response; no Fixel run or external PR yet | Wait for explicit consent; do not bump the thread or contact the second candidate before the response window closes |
+
+## Funnel snapshot — 2026-08-25
+
+| Signal | Observed value | Interpretation |
+|---|---:|---|
+| Stars | 3 | Unchanged; not enough qualified traffic has reached the repository to diagnose star conversion reliably |
+| Forks / watchers | 0 / 0 | No community adoption signal yet |
+| GitHub views (14-day window) | 73 views / 11 unique visitors | Reach is the immediate bottleneck; the sample is too small for a confident conversion conclusion |
+| Referrers | GitHub: 15/4 unique; LinkedIn: 5/2 unique; Telegram: 1/1 unique | LinkedIn has produced only two unique repository visitors in the recorded window |
+| Clones | 129 / 55 unique | Do not treat these as users: the 2026-08-24 spike overlaps dogfood, CI, packaging, and repository work |
+| External issues / PRs / Action runs | 0 / 0 / 0 verified | All recorded Fixel issues and non-Dependabot PRs/runs are owner-driven; external proof is the missing trust signal |
+
+Independent tools in the same category also show that the generic “issue to PR” promise is crowded: on 2026-08-25, `clover0/issue-agent` had 12 stars, `potproject/code-agent` had 38, and the official `openai/codex-action` had 1,209. Fixel should not compete on the generic category label alone. Its sharper wedge is: **local ChatGPT-authenticated Codex, fork/dry-run safety, a tested credential boundary, and a human review gate that demonstrably stopped an unsafe first diff.**
+
+### Next growth bet
+
+Do not add another broad promotional post yet. The next experiment is a permission-based design-partner sprint:
+
+1. Recruit three maintainers with one small, well-scoped issue each.
+2. Help each maintainer reach a local `--provider codex --dry-run` result; do not ask for a star.
+3. Convert at least one run into an external, reviewed PR with clear disclosure and maintainer consent.
+4. Record setup time, failure point, review outcome, and whether the PR merged.
+5. Only then publish the external case study to a new channel. A Show HN is appropriate only when the project is easy to try and the submitting account is already a genuine HN participant; current Show HN guidance discourages drive-by promotional accounts and coordinated votes.
+
+Seven-day success criterion: **3 consenting maintainers contacted, 2 completed dry runs, 1 external reviewed PR, and 1 actionable public report.** If outreach produces clicks but no completed run, reduce installation/authentication friction before buying or adding more reach.
 
 ## Decision journal
+
+- **2026-08-26 — Build measured self-improvement, not unrestricted self-modification.** The strongest extension for Fixel is a repository-native learning loop: turn CI failures, rejected diffs, and reviewer corrections into versioned regression cases and reusable repository rules; replay them before future PRs; promote a new prompt, policy, or strategy only when it improves the benchmark without regressions. The memorable promise is: **“Every rejected PR becomes a test your coding agent should never fail twice.”** Autonomous collection, analysis, scoring, and drafting are acceptable; posting, opening PRs, changing permissions, or modifying hard safety policy remains human-gated.
 
 - **2026-08-24 — Optimize for real use, not artificial stars.** Bought/fake stars damage credibility and do not create users.
 - **2026-08-24 — Secure before launch.** Issue bodies and comments are untrusted; prompt instructions alone are not a security boundary. The agent environment must exclude tokens and its command sandbox must fail closed.
@@ -193,6 +253,12 @@ Fill the result only after the measurement window closes.
 - **2026-08-24 — Diagnose reach before conversion.** The first LinkedIn post produced only two unique GitHub visitors, while the Reddit comment was removed from public distribution. Three unchanged stars therefore do not yet show that the repository page fails to convert; the qualified sample is too small.
 - **2026-08-24 — Do not fight community spam filters.** The Reddit account was very new and the removed comment contained three GitHub links. Treat the automated removal as a failed channel test, ask moderators for guidance, and only retry with one concise link if they approve.
 - **2026-08-24 — Add proof before buying more reach.** The 21-second demo merged in [PR #14](https://github.com/AmIrRX0/Fixel/pull/14) shows the real issue, generated PR, failed credential probe, hardened boundary, CI, and release. Use this native asset for the next distribution wave so visitors see the outcome before clicking.
+- **2026-08-25 — The current bottleneck is qualified distribution, not proven README conversion.** Only 11 unique visitors appear in the 14-day GitHub traffic window, and recorded LinkedIn traffic accounts for two unique visitors. Three unchanged stars from this sample do not justify another README redesign or a larger ad push.
+- **2026-08-25 — Do not count clone spikes as adoption.** The 102-clone spike overlaps owner dogfood, CI, packaging, and documentation work; no external workflow, issue, PR, fork, or watcher corroborates user adoption.
+- **2026-08-25 — Move from self-proof to external proof.** The next meaningful asset is a maintainer-consented run on a repository not owned by AmIrRX0. One external reviewed PR is more credible and more shareable than another self-promotional post.
+- **2026-08-25 — Differentiate on the security/local-auth wedge.** “AI turns issues into PRs” is already offered by independent projects, GitHub Copilot, and the official Codex Action. Fixel's defensible story is the combination of local ChatGPT authentication, fork/dry-run operation, explicit credential isolation, and mandatory human review.
+- **2026-08-26 — Ask before using an external repository as proof.** A `good first issue` label permits contribution but does not automatically make a repository a Fixel design partner. Request maintainer consent, disclose AI assistance, use fork + dry-run, run the repository's own checks, and never ask for a star as part of the contribution.
+- **2026-08-26 — Reject contaminated candidates.** Do not target issues with a linked PR, an active claimant, missing licensing, mandatory cross-platform hardware validation, or unclear ownership. The first permission request goes to `rolecraft-sh/rolecraft#236`; the complete ranked list and drafts are recorded in `outputs/fixel-design-partner-shortlist.md`.
 
 ## Primary references
 

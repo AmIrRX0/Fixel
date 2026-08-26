@@ -25,7 +25,7 @@ test("agent subprocess receives only allowlisted environment variables", () => {
   assert.equal(env.HOME, "/tmp/fixel-home");
   assert.equal(env.ANTHROPIC_API_KEY, "anthropic-secret");
   assert.equal(env.ANTHROPIC_BASE_URL, "https://example.test");
-  assert.equal(env.CLAUDE_AGENT_SDK_CLIENT_APP, "fixel/1.1.0");
+  assert.equal(env.CLAUDE_AGENT_SDK_CLIENT_APP, "fixel/1.2.0");
   assert.equal(env.GITHUB_TOKEN, undefined);
   assert.equal(env.GH_TOKEN, undefined);
   assert.equal(env.OPENAI_API_KEY, undefined);

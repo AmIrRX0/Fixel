@@ -79,7 +79,7 @@ export function buildAgentEnvironment(source = process.env) {
   for (const name of AGENT_ENV_ALLOWLIST) {
     if (typeof source[name] === "string") env[name] = source[name];
   }
-  env.CLAUDE_AGENT_SDK_CLIENT_APP = "fixel/1.1.0";
+  env.CLAUDE_AGENT_SDK_CLIENT_APP = "fixel/1.2.0";
   return env;
 }
 
@@ -110,6 +110,7 @@ export async function solveIssue({
   repoDir,
   issue,
   comments,
+  lessons = [],
   model,
   maxTurns = 250,
   onProgress,
@@ -117,7 +118,7 @@ export async function solveIssue({
   processEnv = process.env,
 }) {
   const q = queryFn({
-    prompt: buildPrompt(issue, comments),
+    prompt: buildPrompt(issue, comments, lessons),
     options: {
       cwd: repoDir,
       model,

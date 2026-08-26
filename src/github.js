@@ -44,6 +44,39 @@ export class GitHubClient {
     });
   }
 
+  async getPullRequest(owner, repo, pull_number) {
+    const { data } = await this.octokit.pulls.get({ owner, repo, pull_number });
+    return data;
+  }
+
+  async getPullRequestReviews(owner, repo, pull_number) {
+    return this.octokit.paginate(this.octokit.pulls.listReviews, {
+      owner,
+      repo,
+      pull_number,
+      per_page: 100,
+    });
+  }
+
+  async getPullRequestReviewComments(owner, repo, pull_number) {
+    return this.octokit.paginate(this.octokit.pulls.listReviewComments, {
+      owner,
+      repo,
+      pull_number,
+      per_page: 100,
+    });
+  }
+
+  async getCheckRunsForRef(owner, repo, ref) {
+    const { data } = await this.octokit.checks.listForRef({
+      owner,
+      repo,
+      ref,
+      per_page: 100,
+    });
+    return data.check_runs;
+  }
+
   /**
    * Fork the repo into the authenticated user's account (no-op when the fork
    * already exists) and wait until GitHub finishes creating it.

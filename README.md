@@ -30,6 +30,18 @@
 
 Fixel is a human-gated GitHub issue-fixing agent. Point it at a repository and it uses either [Claude](https://claude.com) or a locally authenticated [Codex CLI](https://developers.openai.com/codex) to propose a focused pull request for each selected issue. If you cannot push to the repository, Fixel can work through your fork. **It never auto-merges: review the diff and CI before merging.**
 
+### 🧠 Never Fail Twice
+
+Turn a reviewed PR into a repository lesson:
+
+```bash
+fixel learn --repo myuser/myapp --pr 42
+```
+
+Fixel captures the PR description, review comments, inline feedback, conversation comments, and failed checks in `.fixel/lessons/pr-42.md`. The file starts as `status: draft`, so it has **no effect**. A maintainer must replace the placeholders with one specific rule and a regression command, review the captured evidence, and change it to `status: approved`. Future runs automatically load approved lessons; drafts and malformed or oversized files are ignored.
+
+> Review → lesson draft → maintainer approval → future fix → regression command. See the [full workflow and threat model](docs/never-fail-twice.md).
+
 ```mermaid
 flowchart LR
     A["🏷️ Open issue"] --> B["🔍 Fixel reads it<br/>(+ comments)"]
@@ -59,7 +71,7 @@ jobs:
       pull-requests: write
       issues: read
     steps:
-      - uses: AmIrRX0/Fixel@v1.1.0
+      - uses: AmIrRX0/Fixel@v1.2.0
         with:
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -128,6 +140,14 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 | `--dry-run` | Fix locally and show the diff — no push, no PR |
 | `--verbose` | Stream the agent's progress step by step |
 
+Learning command options:
+
+| Option | Description |
+|---|---|
+| `learn` | Capture PR feedback as an inert lesson draft |
+| `--pr <n>` | Pull request to learn from (required with `learn`) |
+| `--output <path>` | Draft path (default: `.fixel/lessons/pr-N.md`) |
+
 ### 📦 Requirements
 
 - Node.js 20+ and `git`
@@ -150,6 +170,7 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 - [ ] Comment trigger (`@fixel fix this`) on issues
 - [ ] Auto-retry when CI fails on the opened PR
 - [ ] Cost report comment on each PR
+- [x] Human-approved learning from review and CI evidence (`fixel learn`)
 
 ### 🧠 Architecture
 
@@ -160,6 +181,8 @@ src/runner.js   ← orchestration: fork/clone → pick issues → branch → age
 src/agent.js    ← Claude Agent SDK provider
 src/codex-agent.js ← local Codex CLI provider
 src/prompt.js   ← shared untrusted-issue prompt boundary
+src/learning.js ← PR/review/check evidence → inert lesson draft
+src/lessons.js  ← bounded loader for maintainer-approved repository lessons
 src/github.js   ← GitHub API via Octokit (issues, forks, PRs)
 src/git.js      ← git operations with safe authentication
 src/config.js   ← env loading
@@ -174,6 +197,16 @@ src/config.js   ← env loading
 <div dir="rtl">
 
 Fixel یک ایجنت حل ایشوهای گیت‌هاب با کنترل انسانی است. یک ریپو به آن بده؛ ایشوهای انتخاب‌شده را می‌خواند و با Claude یا Codex CLI یک Pull Request پیشنهادی می‌سازد. اگر دسترسی push نداشته باشی، از فورک استفاده می‌کند. <b>Fixel هیچ PRی را خودکار مرج نمی‌کند؛ diff و CI را قبل از مرج بررسی کن.</b>
+
+### 🧠 یک اشتباه را دوبار تکرار نکن
+
+با فرمان زیر بازخورد یک PR را به lesson تبدیل کن:
+
+```bash
+fixel learn --repo myuser/myapp --pr 42
+```
+
+فایل ساخته‌شده ابتدا `status: draft` دارد و هیچ اثری روی ایجنت نمی‌گذارد. maintainer باید قانون دقیق و فرمان regression را بنویسد، evidence را بررسی کند و سپس وضعیت را به `approved` تغییر دهد. فقط lessonهای تأییدشده در اجراهای بعدی خوانده می‌شوند. جزئیات در [راهنمای Never Fail Twice](docs/never-fail-twice.md) آمده است.
 
 ### ⚡ استفاده به‌عنوان GitHub Action
 
@@ -271,6 +304,7 @@ node --env-file=.env src/cli.js --repo myuser/myapp --dry-run
 <li>⬜ تریگر با کامنت (<code>@fixel fix this</code>) روی ایشوها</li>
 <li>⬜ تلاش مجدد خودکار وقتی CI روی PR قرمز می‌شه</li>
 <li>⬜ کامنت گزارش هزینه روی هر PR</li>
+<li>✅ یادگیری با تأیید انسان از review و CI با <code>fixel learn</code></li>
 </ul>
 
 <blockquote>⭐ اگه Fixel یک شب دیباگ رو برات نجات داد، به ریپو استار بده — بقیه‌ی دولوپرها این‌طوری پیداش می‌کنن.</blockquote>

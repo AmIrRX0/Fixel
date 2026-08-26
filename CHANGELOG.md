@@ -2,6 +2,20 @@
 
 All notable changes to Fixel will be documented here. The project follows [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] - 2026-08-26
+
+### Added
+
+- Add `fixel learn --repo owner/repo --pr N` to capture pull-request descriptions, review feedback, inline comments, conversation comments, and failed checks as a local lesson draft.
+- Load version-controlled `.fixel/lessons/*.md` files into future issue-fixing prompts only after a maintainer changes their status to `approved`.
+- Add a reproducible Never Fail Twice gate benchmark and the first approved lesson derived from Fixel PR #11.
+
+### Security
+
+- Keep generated lessons inert by default and require an explicit human promotion step.
+- Treat all captured review and CI material as untrusted evidence, never as executable instructions.
+- Bound the number and size of loaded lessons and ignore drafts, malformed files, and symlinks.
+
 ## [1.1.0] - 2026-08-24
 
 ### Added
